@@ -6,6 +6,7 @@ package frontend;
 
 import backend.FileController;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -13,6 +14,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JViewport;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.DocumentFilter;
 
 /**
  *
@@ -21,6 +29,8 @@ import javax.swing.JViewport;
 public class MainInterface extends javax.swing.JFrame {
 
     private FileController fileController = new FileController();
+    private JTextArea currentTextArea;
+    private ArrayList<String> outputs = new ArrayList<>();
 
     /**
      * Creates new form MainInterface
@@ -45,6 +55,7 @@ public class MainInterface extends javax.swing.JFrame {
         jTextArea2 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -60,13 +71,25 @@ public class MainInterface extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTabbedPane1.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
+
+        jTextArea2.setEditable(false);
         jTextArea2.setColumns(20);
         jTextArea2.setRows(5);
         jScrollPane2.setViewportView(jTextArea2);
 
+        jLabel1.setFont(new java.awt.Font("Ubuntu", 0, 21)); // NOI18N
         jLabel1.setText("Entrada");
 
+        jLabel2.setFont(new java.awt.Font("Ubuntu", 0, 21)); // NOI18N
         jLabel2.setText("Consola");
+
+        jTextField1.setEditable(false);
 
         jMenu1.setText("Archivo");
 
@@ -108,17 +131,32 @@ public class MainInterface extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Ejecutar");
+        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jMenu3MousePressed(evt);
+            }
+        });
         jMenuBar1.add(jMenu3);
 
         jMenu4.setText("Reportes");
 
         jMenuItem5.setText("Errores");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem5);
 
         jMenuItem6.setText("Generar AST");
         jMenu4.add(jMenuItem6);
 
         jMenuItem7.setText("Tabla de Símbolos");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem7);
 
         jMenuBar1.add(jMenu4);
@@ -133,17 +171,22 @@ public class MainInterface extends javax.swing.JFrame {
                 .addGap(56, 56, 56)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jTabbedPane1)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(46, Short.MAX_VALUE)
-                .addComponent(jLabel1)
+                .addContainerGap(35, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
@@ -164,8 +207,7 @@ public class MainInterface extends javax.swing.JFrame {
             String input;
             try {
                 input = fileController.readFile(jFileChooser1.getSelectedFile());
-                jTabbedPane1.addTab(jFileChooser1.getSelectedFile().getName(), new JTextArea(input));
-                jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+                addNewTab(jFileChooser1.getSelectedFile().getName(), input);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(MainInterface.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -174,9 +216,9 @@ public class MainInterface extends javax.swing.JFrame {
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         // TODO add your handling code here:
-        String input = JOptionPane.showInputDialog(null, "Ingrese el nombre del archivo nuevo:", "Nuevo Archivo", JOptionPane.QUESTION_MESSAGE);
-        if (input != null) {
-            if (input.isBlank()) {
+        String name = JOptionPane.showInputDialog(null, "Ingrese el nombre del archivo nuevo:", "Nuevo Archivo", JOptionPane.QUESTION_MESSAGE);
+        if (name != null) {
+            if (name.isBlank()) {
                 JOptionPane.showMessageDialog(null, "No puede nombrar el archivo de esa manera", "Error", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
@@ -184,23 +226,24 @@ public class MainInterface extends javax.swing.JFrame {
             int tabCount = jTabbedPane1.getTabCount();
             for (int i = 0; i < tabCount; i++) {
                 String tabTitle = jTabbedPane1.getTitleAt(i);
-                if (tabTitle.equals(input + ".jc")) {
+                if (tabTitle.equals(name + ".jc")) {
                     JOptionPane.showMessageDialog(null, "No puede nombrar el archivo de esa manera ya que hay un archivo abierto con ese nombre", "Error", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
             }
-
-            jTabbedPane1.addTab(input + ".jc", new JScrollPane(new JTextArea()));
-            jTabbedPane1.setSelectedIndex(tabCount);
+            
+            addNewTab(name, null);            
         }
 
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // TODO add your handling code here:
-        //System.out.println(jTabbedPane1.getSelectedIndex());
         if (jTabbedPane1.getTabCount() != 0) {
+            outputs.remove(jTabbedPane1.getSelectedIndex());
             jTabbedPane1.removeTabAt(jTabbedPane1.getSelectedIndex());
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay ningún archivo abierto para ser cerrado", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
 
     }//GEN-LAST:event_jMenuItem4ActionPerformed
@@ -208,29 +251,114 @@ public class MainInterface extends javax.swing.JFrame {
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // TODO add your handling code here:
         int selectedIndex = jTabbedPane1.getSelectedIndex();
-        String name = jTabbedPane1.getTitleAt(selectedIndex);
-        String text = null;
+        if (selectedIndex >= 0) {
+            String name = jTabbedPane1.getTitleAt(selectedIndex);
+            String text = getCurrentTextArea().getText();
+            fileController.saveFile(name, text);
+            JOptionPane.showMessageDialog(null, "Los cambios realizados se han guardado exitosamente", "Archivo guardado", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay ningún archivo abierto para guardar", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        // TODO add your handling code here:
+        if (jTabbedPane1.getTabCount() > 0) {
+            currentTextArea = getCurrentTextArea();
+            textAreaCaretUpdate(currentTextArea);
+            jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
+        } else {
+            jTextField1.setText("");
+            jTextArea2.setText("");
+        }
+
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        // TODO add your handling code here:
+        ErrorTable errorTable = new ErrorTable();
+        errorTable.setVisible(true);
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        // TODO add your handling code here:
+        SymbolTable symbolTable = new SymbolTable();
+        symbolTable.setVisible(true);
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenu3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MousePressed
+        // TODO add your handling code here:
+        if (jTabbedPane1.getTabCount() > 0) {
+            outputs.set(jTabbedPane1.getSelectedIndex(), currentTextArea.getText());
+            jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
+        }
+
+    }//GEN-LAST:event_jMenu3MousePressed
+
+    private void textAreaCaretUpdate(JTextArea textArea) {
+        int linea = 0;
+        int columna = 0;
+        try {
+            linea = textArea.getDocument().getRootElements()[0].getElementIndex(textArea.getCaretPosition());
+            columna = textArea.getCaretPosition() - textArea.getDocument().getRootElements()[0].getElement(linea).getStartOffset();
+        } catch (Exception ex) {
+        }
+        jTextField1.setText("Línea: " + (linea + 1) + " Columna: " + (columna + 1));
+    }
+
+    private JTextArea getCurrentTextArea() {
+        int selectedIndex = jTabbedPane1.getSelectedIndex();
         JScrollPane jScrollPane = (JScrollPane) jTabbedPane1.getComponentAt(selectedIndex);
-        
+
         for (int i = 0; i < jScrollPane.getComponentCount(); i++) {
             if (jScrollPane.getComponent(i) instanceof JViewport) {
                 JViewport jViewport = (JViewport) jScrollPane.getComponent(i);
                 for (int j = 0; j < jViewport.getComponentCount(); j++) {
-                    System.out.println(jViewport.getComponent(j));
                     if (jViewport.getComponent(i) instanceof JTextArea) {
                         JTextArea selectedTextArea = (JTextArea) jViewport.getComponent(i);
-                        text = selectedTextArea.getText();
-                        System.out.println("Texto en la pestaña " + (selectedIndex + 1) + ": " + text);
-                        break;
+                        return selectedTextArea;
                     }
                 }
             }
         }
-        fileController.saveFile(name, text);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+        return null;
+    }
 
+    private void addNewTab(String name, String input) {
 
+        outputs.add("");
+        JTextArea textArea = new JTextArea();
+        
+        Document doc = textArea.getDocument();
+        textArea.setFont(new java.awt.Font("Ubuntu Mono", 1, 20));
+        // Reemplazando tabs con dos espacos
+        ((AbstractDocument) doc).setDocumentFilter(new DocumentFilter() {
+            public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                super.insertString(fb, offset, text.replace("\t", "  "), attrs);
+            }
+        });
+
+        int tabCount = jTabbedPane1.getTabCount();
+        currentTextArea = textArea;
+
+        textArea.addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                textAreaCaretUpdate(textArea);
+            }
+        });
+
+        if (input == null) {
+            jTabbedPane1.addTab(name + ".jc", new JScrollPane(textArea));
+            jTabbedPane1.setSelectedIndex(tabCount);
+        } else {
+            textArea.setText(input);
+            jTabbedPane1.addTab(name, new JScrollPane(textArea));
+            jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);
+        }
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
@@ -250,5 +378,6 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
