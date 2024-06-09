@@ -1,0 +1,109 @@
+package analysis;
+
+//importaciones
+import java_cup.runtime.Symbol;
+import java.util.LinkedList;
+import abstracto.Instruction;
+import symbol.Type;
+import symbol.DataType;
+import symbol.Operators;
+
+//instrucciones
+import instructions.Print;
+
+//expresiones
+import expressions.Native;
+import expressions.Arithmetic;
+import expressions.Relational;
+import expressions.Logical;
+
+// parser
+parser code
+{:
+    scanner s;
+    parser(scanner s){this.s = s;}
+    
+    public void syntax_error(Symbol s){
+        System.out.println("Error Sintactico en la linea " +
+        (s.left) + " y columna " + (s.right) +
+        ". No se esperaba el componente: " + (s.value) + ".");
+    }
+
+    public void unrecovered_syntax_error (Symbol s){
+        System.out.println("Error Sintactico no recuperable en la linea" +
+        (s.left) + " y columna " + (s.right) +
+        ". No se esperaba el componente: " + (s.value) + ".");
+    }
+
+:}
+
+action code
+{:
+:}
+
+//terminales
+terminal String CADENA, CARACTER, ENTERO, DECIMAL;
+terminal ID, UMENOS, POT, IGUALCN, DIF, MENOR_IGUAL, MAYOR_IGUAL;
+terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING; 
+terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
+terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
+terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO_COMA, DOS_PUNTOS, COMA;
+
+//no terminales
+nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES;
+nonterminal Instruction INSTRUCCION;
+nonterminal Instruction EXPRESION;
+nonterminal Instruction PRINTLN;
+
+//precedencia
+precedence left OR;
+precedence left AND;
+precedence left XOR;
+precedence right NOT;
+precedence left IGUALCN, DIF, MENOR_QUE, MENOR_IGUAL, MAYOR_QUE, MAYOR_IGUAL; 
+precedence left MAS, MENOS;
+precedence left MULT, DIV, MOD;
+precedence nonassoc POT;
+precedence right UMENOS;
+
+start with INICIO;
+
+INICIO ::= INSTRUCCIONES:a      {:   RESULT = a;   :}
+;
+
+INSTRUCCIONES ::= INSTRUCCIONES:a INSTRUCCION:b     {: RESULT = a; RESULT.add(b); :}
+                | INSTRUCCION:a                   {: RESULT = new LinkedList<>(); RESULT.add(a); :}
+;
+
+INSTRUCCION ::= PRINTLN:a PUNTO_COMA      {:   RESULT = a;   :}
+              | EXPRESION:a PUNTO_COMA    {:   RESULT = a;   :}
+;
+
+EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Operators.NEGACION, aleft, aright );   :}%prec UMENOS
+            | EXPRESION:a MULT MULT EXPRESION:b  {:   RESULT = new Arithmetic(a, b, Operators.POTENCIA, aleft, aright );   :}%prec POT
+            | EXPRESION:a MULT EXPRESION:b    {:   RESULT = new Arithmetic(a, b, Operators.MULTIPLICACION, aleft, aright );   :}
+            | EXPRESION:a DIV EXPRESION:b     {:   RESULT = new Arithmetic(a, b, Operators.DIVISION, aleft, aright );   :}
+            | EXPRESION:a MOD EXPRESION:b     {:   RESULT = new Arithmetic(a, b, Operators.MODULO, aleft, aright );   :}
+            | EXPRESION:a MAS EXPRESION:b     {:   RESULT = new Arithmetic(a, b, Operators.SUMA, aleft, aright );   :}
+            | EXPRESION:a MENOS EXPRESION:b   {:   RESULT = new Arithmetic(a, b, Operators.RESTA, aleft, aright );   :}
+            | PAR_IZQ EXPRESION:a PAR_DER     {:   RESULT = a; :}
+            | EXPRESION:a IGUAL IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.IGUALACION, aleft, aright);   :}%prec IGUALCN
+            | EXPRESION:a NOT IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.DIFERENCIACION, aleft, aright);   :}%prec DIF
+            | EXPRESION:a MENOR_QUE EXPRESION:b {:   RESULT = new Relational(a, b, Operators.MENOR_QUE, aleft, aright);   :}
+            | EXPRESION:a MENOR_QUE IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.MENOR_IGUAL, aleft, aright);   :}%prec MENOR_IGUAL
+            | EXPRESION:a MAYOR_QUE EXPRESION:b {:   RESULT = new Relational(a, b, Operators.MAYOR_QUE, aleft, aright);   :}
+            | EXPRESION:a MAYOR_QUE IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.MAYOR_IGUAL, aleft, aright);   :}%prec MAYOR_IGUAL
+            | NOT EXPRESION:a {:   RESULT = new Logical(a, Operators.NOT, aleft, aright);   :}
+            | EXPRESION:a XOR EXPRESION:b {:   RESULT = new Logical(a, b, Operators.XOR, aleft, aright);   :}
+            | EXPRESION:a AND EXPRESION:b {:   RESULT = new Logical(a, b, Operators.AND, aleft, aright);   :}
+            | EXPRESION:a OR EXPRESION:b {:   RESULT = new Logical(a, b, Operators.OR, aleft, aright);   :}
+            | ENTERO:a      {:   RESULT = new Native(Integer.parseInt(a), new Type(DataType.ENTERO), aleft, aright );   :}
+            | DECIMAL:a     {:   RESULT = new Native(new Double(a), new Type(DataType.DECIMAL), aleft, aright );   :}
+            | CADENA:a      {:   RESULT = new Native(a, new Type(DataType.CADENA), aleft, aright );   :}
+            | CARACTER:a    {:   RESULT = new Native(a, new Type(DataType.CARACTER), aleft, aright );   :}
+            | KW_TRUE:a     {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright );   :}
+            | KW_FALSE:a    {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright );   :}
+;
+
+PRINTLN ::= KW_PRINTLN PAR_IZQ EXPRESION:a PAR_DER    {: RESULT = new Print(a, aleft, aright); :}
+;

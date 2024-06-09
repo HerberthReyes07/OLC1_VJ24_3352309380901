@@ -34,7 +34,7 @@ public class FileController {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(LeerArchivo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileController.class.getName()).log(Level.SEVERE, null, ex);
         }
         return input;
     }
