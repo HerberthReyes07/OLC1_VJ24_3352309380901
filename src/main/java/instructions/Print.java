@@ -9,6 +9,7 @@ import symbol.DataType;
 import symbol.SymbolTable;
 import symbol.Tree;
 import symbol.Type;
+import exceptions.Error;
 
 /**
  *
@@ -25,11 +26,11 @@ public class Print extends Instruction {
 
     @Override
     public Object interpret(Tree tree, SymbolTable table) {
-        var resultado = this.expression.interpret(tree, table);
-        if (resultado instanceof Error) {
-            return resultado;
+        var result = this.expression.interpret(tree, table);
+        if (result instanceof Error) {
+            return result;
         }
-        tree.Print(resultado.toString());
+        tree.Print(result.toString());
         return null;
     }
     

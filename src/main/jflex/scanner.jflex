@@ -23,7 +23,7 @@ import java_cup.runtime.Symbol;
 %char
 %column
 %full
-%debug
+//%debug
 %ignorecase
 
 //simbolos del sistema
@@ -35,6 +35,7 @@ CORCHETE_IZQ = "["
 CORCHETE_DER = "]"
 PUNTO_COMA = ";"
 DOS_PUNTOS = ":"
+GUION_BAJO = "_"
 COMA = ","
 MAS = "+"
 MENOS = "-"
@@ -131,6 +132,7 @@ KW_FALSE = "false"
 <YYINITIAL> {CORCHETE_DER}       {return new Symbol(sym.CORCHETE_DER, yyline, yycolumn, yytext());}
 <YYINITIAL> {PUNTO_COMA}       {return new Symbol(sym.PUNTO_COMA, yyline, yycolumn, yytext());}
 <YYINITIAL> {DOS_PUNTOS}       {return new Symbol(sym.DOS_PUNTOS, yyline, yycolumn, yytext());}
+<YYINITIAL> {GUION_BAJO}       {return new Symbol(sym.GUION_BAJO, yyline, yycolumn, yytext());}
 <YYINITIAL> {COMA}       {return new Symbol(sym.COMA, yyline, yycolumn, yytext());}
 <YYINITIAL> {MAS}       {return new Symbol(sym.MAS, yyline, yycolumn, yytext());}
 <YYINITIAL> {MENOS}     {return new Symbol(sym.MENOS, yyline, yycolumn, yytext());}

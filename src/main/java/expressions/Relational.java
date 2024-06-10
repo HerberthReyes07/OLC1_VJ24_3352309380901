@@ -335,17 +335,28 @@ public class Relational extends Instruction {
                     default:
                         return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
                 }
-            /*case CADENA:
+            case BOOLEANO:
                 switch (type2) {
-                    case CADENA:
+                    case BOOLEANO:
                         this.type = new Type(DataType.BOOLEANO);
-                        if (!op1.toString().equals(op2.toString())) {
+                        if (op1.toString().equalsIgnoreCase("false") && op2.toString().equalsIgnoreCase("true")) {
                             return true;
                         }
                         return false;
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
-                }*/
+                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                }
+            case CADENA:
+                switch (type2) {
+                    case CADENA:
+                        this.type = new Type(DataType.BOOLEANO);
+                        if (op1.toString().length() < op2.toString().length()) {
+                            return true;
+                        }
+                        return false;
+                    default:
+                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                }
             default:
                 return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
         }
@@ -425,17 +436,29 @@ public class Relational extends Instruction {
                     default:
                         return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
                 }
-            /*case CADENA:
+            case BOOLEANO:
                 switch (type2) {
-                    case CADENA:
+                    case BOOLEANO:
                         this.type = new Type(DataType.BOOLEANO);
-                        if (!op1.toString().equals(op2.toString())) {
+                        if ((op1.toString().equalsIgnoreCase("false") && op2.toString().equalsIgnoreCase("true"))
+                                || op1.toString().equalsIgnoreCase(op2.toString())) {
                             return true;
                         }
                         return false;
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
-                }*/
+                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                }
+            case CADENA:
+                switch (type2) {
+                    case CADENA:
+                        this.type = new Type(DataType.BOOLEANO);
+                        if (op1.toString().length() <= op2.toString().length()) {
+                            return true;
+                        }
+                        return false;
+                    default:
+                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                }
             default:
                 return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
         }
@@ -515,17 +538,28 @@ public class Relational extends Instruction {
                     default:
                         return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
                 }
-            /*case CADENA:
+            case BOOLEANO:
                 switch (type2) {
-                    case CADENA:
+                    case BOOLEANO:
                         this.type = new Type(DataType.BOOLEANO);
-                        if (!op1.toString().equals(op2.toString())) {
+                        if (op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("false")) {
                             return true;
                         }
                         return false;
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
-                }*/
+                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                }
+            case CADENA:
+                switch (type2) {
+                    case CADENA:
+                        this.type = new Type(DataType.BOOLEANO);
+                        if (op1.toString().length() > op2.toString().length()) {
+                            return true;
+                        }
+                        return false;
+                    default:
+                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                }
             default:
                 return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
         }
@@ -605,17 +639,29 @@ public class Relational extends Instruction {
                     default:
                         return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
                 }
-            /*case CADENA:
+            case BOOLEANO:
                 switch (type2) {
-                    case CADENA:
+                    case BOOLEANO:
                         this.type = new Type(DataType.BOOLEANO);
-                        if (!op1.toString().equals(op2.toString())) {
+                        if ((op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("false"))
+                                || op1.toString().equalsIgnoreCase(op2.toString())) {
                             return true;
                         }
                         return false;
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
-                }*/
+                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                }
+            case CADENA:
+                switch (type2) {
+                    case CADENA:
+                        this.type = new Type(DataType.BOOLEANO);
+                        if (op1.toString().length() >= op2.toString().length()) {
+                            return true;
+                        }
+                        return false;
+                    default:
+                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                }
             default:
                 return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
         }

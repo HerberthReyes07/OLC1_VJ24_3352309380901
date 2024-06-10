@@ -10,6 +10,9 @@ import symbol.Operators;
 
 //instrucciones
 import instructions.Print;
+import instructions.If;
+import instructions.Match;
+import instructions.CaseMatch;
 
 //expresiones
 import expressions.Native;
@@ -47,13 +50,15 @@ terminal ID, UMENOS, POT, IGUALCN, DIF, MENOR_IGUAL, MAYOR_IGUAL;
 terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING; 
 terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
 terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
-terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO_COMA, DOS_PUNTOS, COMA;
+terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO_COMA, DOS_PUNTOS, GUION_BAJO, COMA;
 
 //no terminales
-nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES;
+nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES, DEFAULT_MATCH;
+nonterminal LinkedList<CaseMatch> CASOS_MATCH;
+nonterminal CaseMatch CASO_MATCH;
 nonterminal Instruction INSTRUCCION;
 nonterminal Instruction EXPRESION;
-nonterminal Instruction PRINTLN;
+nonterminal Instruction PRINTLN, SENTENCIA_IF, SENTENCIA_MATCH;
 
 //precedencia
 precedence left OR;
@@ -76,6 +81,8 @@ INSTRUCCIONES ::= INSTRUCCIONES:a INSTRUCCION:b     {: RESULT = a; RESULT.add(b)
 ;
 
 INSTRUCCION ::= PRINTLN:a PUNTO_COMA      {:   RESULT = a;   :}
+              | SENTENCIA_IF:a            {:   RESULT = a;   :}
+              | SENTENCIA_MATCH:a            {:   RESULT = a;   :}
               | EXPRESION:a PUNTO_COMA    {:   RESULT = a;   :}
 ;
 
@@ -106,4 +113,24 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
 ;
 
 PRINTLN ::= KW_PRINTLN PAR_IZQ EXPRESION:a PAR_DER    {: RESULT = new Print(a, aleft, aright); :}
+;
+
+SENTENCIA_IF ::= KW_IF PAR_IZQ EXPRESION:a PAR_DER LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER  {:   RESULT = new If(a, b, aleft, aright);   :}
+               | KW_IF PAR_IZQ EXPRESION:a PAR_DER LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER KW_ELSE LLAVE_IZQ INSTRUCCIONES:c LLAVE_DER  {:   RESULT = new If(a, b, c, aleft, aright);   :}
+               | KW_IF PAR_IZQ EXPRESION:a PAR_DER LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER KW_ELSE SENTENCIA_IF:c  {:   RESULT = new If(a, b, c, aleft, aright);   :}
+;
+
+SENTENCIA_MATCH ::= KW_MATCH EXPRESION:a LLAVE_IZQ CASOS_MATCH:b DEFAULT_MATCH:c LLAVE_DER  {:   RESULT = new Match(a, b, c, aleft, aright );   :}
+                  | KW_MATCH EXPRESION:a LLAVE_IZQ CASOS_MATCH:b LLAVE_DER  {:   RESULT = new Match(a, b, aleft, aright );   :}
+                  | KW_MATCH EXPRESION:a LLAVE_IZQ DEFAULT_MATCH:b LLAVE_DER    {:   RESULT = new Match(a, b, true, aleft, aright );   :}
+;
+
+CASOS_MATCH ::= CASOS_MATCH:a CASO_MATCH:b  {: RESULT = a; RESULT.add(b); :}
+              | CASO_MATCH:a    {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
+;
+
+CASO_MATCH ::= EXPRESION:a IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER  {:   RESULT = new CaseMatch(a, b, aleft, aright );   :}
+;
+
+DEFAULT_MATCH ::= GUION_BAJO IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:a LLAVE_DER  {:   RESULT = a;   :}
 ;

@@ -29,10 +29,21 @@ public class ProyectoEVJ24 {
                     + "println(\'\\\"\');\n"
                     + "println(\'\\\'\');\n"
                     + "println(\'\\t\');";*/
-            String texto = "println((1+1)<2 || 3<2);//false\n"
-                    + "println(1<2 && 3<2);//false\n"
-                    + "println(1<2 ^ 3<2);//true\n"
-                    + "println(!true);//false";
+            String texto = ""
+                    + "match 1 {\n"
+                    + "    2**2 => { \n"
+                    + "        println(\"ES 4\");\n"
+                    + "    }\n"
+                    + "    4-1 => { \n"
+                    + "        println(\"ES 3\");\n"
+                    + "    }\n"
+                    + "    2*1 => { \n"
+                    + "        println(\"ES 2\");\n"
+                    + "    }\n"
+                    + "    _ => { \n"
+                    + "        println(\"NO ES 4, 3 O 2\");\n"
+                    + "    }\n"
+                    + "}";
             scanner s = new scanner(new BufferedReader(new StringReader(texto)));
             parser p = new parser(s);
             var resultado = p.parse();

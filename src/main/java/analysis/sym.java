@@ -39,7 +39,7 @@ public interface sym {
   public static final int EOF = 0;
   public static final int DECIMAL = 5;
   public static final int error = 1;
-  public static final int COMA = 51;
+  public static final int COMA = 52;
   public static final int CADENA = 2;
   public static final int DIF = 10;
   public static final int MENOS = 32;
@@ -48,6 +48,7 @@ public interface sym {
   public static final int PAR_IZQ = 43;
   public static final int KW_TRUE = 29;
   public static final int KW_IF = 20;
+  public static final int GUION_BAJO = 51;
   public static final int LLAVE_DER = 46;
   public static final int KW_BREAK = 26;
   public static final int IGUALCN = 9;
@@ -112,6 +113,7 @@ public interface sym {
   "CORCHETE_DER",
   "PUNTO_COMA",
   "DOS_PUNTOS",
+  "GUION_BAJO",
   "COMA"
   };
 }
