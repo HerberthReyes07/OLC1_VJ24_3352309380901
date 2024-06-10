@@ -70,7 +70,6 @@ public class Match extends Instruction {
         }
 
         if (this.defaultMatch != null) {
-            //return this.defaultMatch.interpret(tree, table);
             Object res = null;
             for (var a : this.defaultMatch) {
                 res = a.interpret(tree, table);

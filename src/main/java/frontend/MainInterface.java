@@ -5,6 +5,7 @@
 package frontend;
 
 import backend.FileController;
+import backend.Interpreter;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -80,6 +81,7 @@ public class MainInterface extends javax.swing.JFrame {
 
         jTextArea2.setEditable(false);
         jTextArea2.setColumns(20);
+        jTextArea2.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         jTextArea2.setRows(5);
         jScrollPane2.setViewportView(jTextArea2);
 
@@ -183,7 +185,7 @@ public class MainInterface extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(35, Short.MAX_VALUE)
+                .addContainerGap(50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -289,7 +291,11 @@ public class MainInterface extends javax.swing.JFrame {
     private void jMenu3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MousePressed
         // TODO add your handling code here:
         if (jTabbedPane1.getTabCount() > 0) {
-            outputs.set(jTabbedPane1.getSelectedIndex(), currentTextArea.getText());
+            Interpreter interpreter = new Interpreter();
+            interpreter.setCode(currentTextArea.getText());
+            interpreter.interpret();
+            
+            outputs.set(jTabbedPane1.getSelectedIndex(), interpreter.getConsole());
             jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
         }
 

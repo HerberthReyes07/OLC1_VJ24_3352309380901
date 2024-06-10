@@ -26,7 +26,7 @@ public class Tree {
     }
     
     public void Print(String value) {
-        this.console += value + "\n";
+        this.console += "> " + value + "\n";
     }
 
     public LinkedList<Instruction> getInstructions() {
