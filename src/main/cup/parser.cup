@@ -19,6 +19,7 @@ import expressions.Native;
 import expressions.Arithmetic;
 import expressions.Relational;
 import expressions.Logical;
+import expressions.TypeCasting;
 
 // parser
 parser code
@@ -46,7 +47,7 @@ action code
 
 //terminales
 terminal String CADENA, CARACTER, ENTERO, DECIMAL;
-terminal ID, UMENOS, POT, IGUALCN, DIF, MENOR_IGUAL, MAYOR_IGUAL;
+terminal ID, UMENOS, POT, IGLCN, DIF, MENOR_IGUAL, MAYOR_IGUAL, CASTEO_PREC;
 terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING; 
 terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
 terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
@@ -56,20 +57,21 @@ terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUN
 nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES, DEFAULT_MATCH;
 nonterminal LinkedList<CaseMatch> CASOS_MATCH;
 nonterminal CaseMatch CASO_MATCH;
+nonterminal Type TIPO;
 nonterminal Instruction INSTRUCCION;
 nonterminal Instruction EXPRESION;
-nonterminal Instruction PRINTLN, SENTENCIA_IF, SENTENCIA_MATCH;
+nonterminal Instruction PRINTLN, SENTENCIA_IF, SENTENCIA_MATCH, CASTEO;
 
 //precedencia
 precedence left OR;
 precedence left AND;
 precedence left XOR;
 precedence right NOT;
-precedence left IGUALCN, DIF, MENOR_QUE, MENOR_IGUAL, MAYOR_QUE, MAYOR_IGUAL; 
+precedence left IGLCN, DIF, MENOR_QUE, MENOR_IGUAL, MAYOR_QUE, MAYOR_IGUAL; 
 precedence left MAS, MENOS;
 precedence left MULT, DIV, MOD;
 precedence nonassoc POT;
-precedence right UMENOS;
+precedence right UMENOS, CASTEO_PREC;
 
 start with INICIO;
 
@@ -77,16 +79,17 @@ INICIO ::= INSTRUCCIONES:a      {:   RESULT = a;   :}
 ;
 
 INSTRUCCIONES ::= INSTRUCCIONES:a INSTRUCCION:b     {: RESULT = a; RESULT.add(b); :}
-                | INSTRUCCION:a                   {: RESULT = new LinkedList<>(); RESULT.add(a); :}
+                | INSTRUCCION:a                     {: RESULT = new LinkedList<>(); RESULT.add(a); :}
 ;
 
 INSTRUCCION ::= PRINTLN:a PUNTO_COMA      {:   RESULT = a;   :}
               | SENTENCIA_IF:a            {:   RESULT = a;   :}
-              | SENTENCIA_MATCH:a            {:   RESULT = a;   :}
+              | SENTENCIA_MATCH:a         {:   RESULT = a;   :}
               | EXPRESION:a PUNTO_COMA    {:   RESULT = a;   :}
 ;
 
 EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Operators.NEGACION, aleft, aright );   :}%prec UMENOS
+            | CASTEO:a      {:   RESULT = a;  :}
             | EXPRESION:a MULT MULT EXPRESION:b  {:   RESULT = new Arithmetic(a, b, Operators.POTENCIA, aleft, aright );   :}%prec POT
             | EXPRESION:a MULT EXPRESION:b    {:   RESULT = new Arithmetic(a, b, Operators.MULTIPLICACION, aleft, aright );   :}
             | EXPRESION:a DIV EXPRESION:b     {:   RESULT = new Arithmetic(a, b, Operators.DIVISION, aleft, aright );   :}
@@ -94,7 +97,7 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | EXPRESION:a MAS EXPRESION:b     {:   RESULT = new Arithmetic(a, b, Operators.SUMA, aleft, aright );   :}
             | EXPRESION:a MENOS EXPRESION:b   {:   RESULT = new Arithmetic(a, b, Operators.RESTA, aleft, aright );   :}
             | PAR_IZQ EXPRESION:a PAR_DER     {:   RESULT = a; :}
-            | EXPRESION:a IGUAL IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.IGUALACION, aleft, aright);   :}%prec IGUALCN
+            | EXPRESION:a IGUAL IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.IGUALACION, aleft, aright);   :}%prec IGLCN
             | EXPRESION:a NOT IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.DIFERENCIACION, aleft, aright);   :}%prec DIF
             | EXPRESION:a MENOR_QUE EXPRESION:b {:   RESULT = new Relational(a, b, Operators.MENOR_QUE, aleft, aright);   :}
             | EXPRESION:a MENOR_QUE IGUAL EXPRESION:b {:   RESULT = new Relational(a, b, Operators.MENOR_IGUAL, aleft, aright);   :}%prec MENOR_IGUAL
@@ -104,12 +107,22 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | EXPRESION:a XOR EXPRESION:b {:   RESULT = new Logical(a, b, Operators.XOR, aleft, aright);   :}
             | EXPRESION:a AND EXPRESION:b {:   RESULT = new Logical(a, b, Operators.AND, aleft, aright);   :}
             | EXPRESION:a OR EXPRESION:b {:   RESULT = new Logical(a, b, Operators.OR, aleft, aright);   :}
-            | ENTERO:a      {:   RESULT = new Native(Integer.parseInt(a), new Type(DataType.ENTERO), aleft, aright );   :}
-            | DECIMAL:a     {:   RESULT = new Native(new Double(a), new Type(DataType.DECIMAL), aleft, aright );   :}
-            | CADENA:a      {:   RESULT = new Native(a, new Type(DataType.CADENA), aleft, aright );   :}
-            | CARACTER:a    {:   RESULT = new Native(a, new Type(DataType.CARACTER), aleft, aright );   :}
-            | KW_TRUE:a     {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright );   :}
-            | KW_FALSE:a    {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright );   :}
+            | ENTERO:a      {:   RESULT = new Native(Integer.parseInt(a), new Type(DataType.ENTERO), aleft, aright);   :}
+            | DECIMAL:a     {:   RESULT = new Native(new Double(a), new Type(DataType.DECIMAL), aleft, aright);   :}
+            | CADENA:a      {:   RESULT = new Native(a, new Type(DataType.CADENA), aleft, aright);   :}
+            | CARACTER:a    {:   RESULT = new Native(a, new Type(DataType.CARACTER), aleft, aright);   :}
+            | KW_TRUE:a     {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright);   :}
+            | KW_FALSE:a    {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright);   :}
+;
+
+TIPO ::= KW_INT         {:   RESULT = new Type(DataType.ENTERO);   :}
+       | KW_DOUBLE      {:   RESULT = new Type(DataType.DECIMAL);   :}
+       | KW_BOOL        {:   RESULT = new Type(DataType.BOOLEANO);   :}
+       | KW_CHAR        {:   RESULT = new Type(DataType.CARACTER);   :}
+       | KW_STRING      {:   RESULT = new Type(DataType.CADENA);   :}
+;
+
+CASTEO ::= PAR_IZQ TIPO:a PAR_DER EXPRESION:b         {:   RESULT = new TypeCasting(a, b, aleft, aright);   :}%prec CASTEO_PREC
 ;
 
 PRINTLN ::= KW_PRINTLN PAR_IZQ EXPRESION:a PAR_DER    {: RESULT = new Print(a, aleft, aright); :}
@@ -125,11 +138,11 @@ SENTENCIA_MATCH ::= KW_MATCH EXPRESION:a LLAVE_IZQ CASOS_MATCH:b DEFAULT_MATCH:c
                   | KW_MATCH EXPRESION:a LLAVE_IZQ DEFAULT_MATCH:b LLAVE_DER    {:   RESULT = new Match(a, b, true, aleft, aright );   :}
 ;
 
-CASOS_MATCH ::= CASOS_MATCH:a CASO_MATCH:b  {: RESULT = a; RESULT.add(b); :}
-              | CASO_MATCH:a    {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
+CASOS_MATCH ::= CASOS_MATCH:a CASO_MATCH:b  {:   RESULT = a; RESULT.add(b); :}
+              | CASO_MATCH:a                {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
 ;
 
-CASO_MATCH ::= EXPRESION:a IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER  {:   RESULT = new CaseMatch(a, b, aleft, aright );   :}
+CASO_MATCH ::= EXPRESION:a IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER    {:   RESULT = new CaseMatch(a, b, aleft, aright );   :}
 ;
 
 DEFAULT_MATCH ::= GUION_BAJO IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:a LLAVE_DER  {:   RESULT = a;   :}

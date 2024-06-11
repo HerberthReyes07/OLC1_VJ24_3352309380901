@@ -81,11 +81,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        this.type = new Type(DataType.BOOLEANO);
-                        if (op1.toString().equalsIgnoreCase("true") || op2.toString().equalsIgnoreCase("true")) {
-                            return true;
-                        }
-                        return false;
+                        return op1.toString().equalsIgnoreCase("true") || op2.toString().equalsIgnoreCase("true");
                     default:
                         return new Error("Semantico", "Operacion logica OR Invalida", this.line, this.column);
                 }
@@ -102,11 +98,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        this.type = new Type(DataType.BOOLEANO);
-                        if (op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("true")) {
-                            return true;
-                        }
-                        return false;
+                        return op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("true");
                     default:
                         return new Error("Semantico", "Operacion logica AND Invalida", this.line, this.column);
                 }
@@ -123,11 +115,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        this.type = new Type(DataType.BOOLEANO);
-                        if (!op1.toString().equalsIgnoreCase(op2.toString())) {
-                            return true;
-                        }
-                        return false;
+                        return !op1.toString().equalsIgnoreCase(op2.toString());
                     default:
                         return new Error("Semantico", "Operacion logica XOR Invalida", this.line, this.column);
                 }
@@ -141,11 +129,7 @@ public class Logical extends Instruction {
         DataType opU = this.uniqueOperand.type.getDataType();
         switch (opU) {
             case BOOLEANO:
-                this.type = new Type(DataType.BOOLEANO);
-                if (opU.toString().equalsIgnoreCase("false")) {
-                    return true;
-                }
-                return false;
+                return opU.toString().equalsIgnoreCase("false");
             default:
                 return new Error("Semantico", "Operacion logica NOT Invalida", this.line, this.column);
         }
