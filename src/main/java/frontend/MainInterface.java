@@ -8,6 +8,7 @@ import backend.FileController;
 import backend.Interpreter;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -22,6 +23,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
+import exceptions.Error;
 
 /**
  *
@@ -32,6 +34,12 @@ public class MainInterface extends javax.swing.JFrame {
     private FileController fileController = new FileController();
     private JTextArea currentTextArea;
     private ArrayList<String> outputs = new ArrayList<>();
+    private ArrayList<LinkedList<Error>> arrayLexErrors = new ArrayList<>();
+    private ArrayList<LinkedList<Error>> arraySyntaxErrors = new ArrayList<>();
+    private ArrayList<LinkedList<Error>> arraySemanticErrors = new ArrayList<>();
+    private LinkedList<Error> lexErrors;
+    private LinkedList<Error> syntaxErrors;
+    private LinkedList<Error> semanticErrors;
 
     /**
      * Creates new form MainInterface
@@ -59,6 +67,7 @@ public class MainInterface extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -94,6 +103,14 @@ public class MainInterface extends javax.swing.JFrame {
         jTextField1.setEditable(false);
 
         jMenu1.setText("Archivo");
+
+        jMenuItem8.setText("Ejecutar");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem8);
 
         jMenuItem1.setText("Nuevo");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
@@ -233,8 +250,8 @@ public class MainInterface extends javax.swing.JFrame {
                     return;
                 }
             }
-            
-            addNewTab(name, null);            
+
+            addNewTab(name, null);
         }
 
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -243,6 +260,12 @@ public class MainInterface extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (jTabbedPane1.getTabCount() != 0) {
             outputs.remove(jTabbedPane1.getSelectedIndex());
+            arrayLexErrors.remove(jTabbedPane1.getSelectedIndex());
+            arraySyntaxErrors.remove(jTabbedPane1.getSelectedIndex());
+            arraySemanticErrors.remove(jTabbedPane1.getSelectedIndex());
+            this.lexErrors = new LinkedList<>();
+            this.syntaxErrors = new LinkedList<>();
+            this.semanticErrors = new LinkedList<>();
             jTabbedPane1.removeTabAt(jTabbedPane1.getSelectedIndex());
         } else {
             JOptionPane.showMessageDialog(null, "No hay ningún archivo abierto para ser cerrado", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -269,6 +292,9 @@ public class MainInterface extends javax.swing.JFrame {
             currentTextArea = getCurrentTextArea();
             textAreaCaretUpdate(currentTextArea);
             jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
+            this.lexErrors = arrayLexErrors.get(jTabbedPane1.getSelectedIndex());
+            this.syntaxErrors = arraySyntaxErrors.get(jTabbedPane1.getSelectedIndex());
+            this.semanticErrors = arraySemanticErrors.get(jTabbedPane1.getSelectedIndex());
         } else {
             jTextField1.setText("");
             jTextArea2.setText("");
@@ -278,8 +304,18 @@ public class MainInterface extends javax.swing.JFrame {
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         // TODO add your handling code here:
-        ErrorTable errorTable = new ErrorTable();
-        errorTable.setVisible(true);
+        
+        if (!this.lexErrors.isEmpty() || !this.syntaxErrors.isEmpty() || !this.semanticErrors.isEmpty()) {
+            ErrorTable errorTable = new ErrorTable();
+            errorTable.setLexErrors(this.lexErrors);
+            errorTable.setSyntaxErrors(this.syntaxErrors);
+            errorTable.setSemanticErrors(this.semanticErrors);
+            errorTable.fillTable();
+            errorTable.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay ningún error para mostrar", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
@@ -290,16 +326,46 @@ public class MainInterface extends javax.swing.JFrame {
 
     private void jMenu3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MousePressed
         // TODO add your handling code here:
+        
+
+    }//GEN-LAST:event_jMenu3MousePressed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        // TODO add your handling code here:
         if (jTabbedPane1.getTabCount() > 0) {
             Interpreter interpreter = new Interpreter();
             interpreter.setCode(currentTextArea.getText());
             interpreter.interpret();
-            
-            outputs.set(jTabbedPane1.getSelectedIndex(), interpreter.getConsole());
-            jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
-        }
 
-    }//GEN-LAST:event_jMenu3MousePressed
+            String output = interpreter.getConsole() + "\n";
+
+            this.lexErrors = interpreter.getLexErrors();
+            this.syntaxErrors = interpreter.getSyntaxErrors();
+            this.semanticErrors = interpreter.getSemanticErrors();
+
+            //errores lexicos
+            for (var a : this.lexErrors) {
+                output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
+            }
+            //errores sintacticos
+            for (var a : this.syntaxErrors) {
+                output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
+            }
+            //errores semanticos
+            /*for (var a : this.semanticErrors) {
+                output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
+            }*/
+
+            outputs.set(jTabbedPane1.getSelectedIndex(), output);
+            jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
+            
+            arrayLexErrors.set(jTabbedPane1.getSelectedIndex(), this.lexErrors);
+            arraySyntaxErrors.set(jTabbedPane1.getSelectedIndex(), this.syntaxErrors);
+            arraySemanticErrors.set(jTabbedPane1.getSelectedIndex(), this.semanticErrors);
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay ningún archivo para ser ejecutado", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void textAreaCaretUpdate(JTextArea textArea) {
         int linea = 0;
@@ -333,8 +399,12 @@ public class MainInterface extends javax.swing.JFrame {
     private void addNewTab(String name, String input) {
 
         outputs.add("");
-        JTextArea textArea = new JTextArea();
+        arrayLexErrors.add(new LinkedList<>());
+        arraySyntaxErrors.add(new LinkedList<>());
+        arraySemanticErrors.add(new LinkedList<>());
         
+        JTextArea textArea = new JTextArea();
+
         Document doc = textArea.getDocument();
         textArea.setFont(new java.awt.Font("Ubuntu Mono", 1, 20));
         // Reemplazando tabs con dos espacos
@@ -381,6 +451,7 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
+    private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea2;

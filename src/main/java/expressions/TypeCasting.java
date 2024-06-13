@@ -10,7 +10,6 @@ import symbol.Tree;
 import symbol.Type;
 import exceptions.Error;
 import symbol.DataType;
-import static symbol.DataType.ENTERO;
 
 /**
  *
@@ -43,7 +42,7 @@ public class TypeCasting extends Instruction {
             case CARACTER:
                 return castToChar(expressionToCast);
             default:
-                return new Error("Semantico", "Casteo Invalido", this.line, this.column);
+                return new Error("SEMANTICO", "Casteo Inválido", this.line, this.column);
         }
     }
 
@@ -59,7 +58,7 @@ public class TypeCasting extends Instruction {
             case CARACTER:
                 return expressionToCast.toString().codePointAt(0);
             default:
-                return new Error("Semantico", "Casteo de tipo: " + dataType + " a tipo: Entero, no valido", this.line, this.column);
+                return new Error("SEMANTICO", "Casteo Inválido: de tipo " + dataType + " a tipo ENTERO", this.line, this.column);
         }
     }
     
@@ -75,7 +74,7 @@ public class TypeCasting extends Instruction {
                 double aux2 = expressionToCast.toString().codePointAt(0);
                 return aux2;
             default:
-                return new Error("Semantico", "Casteo de tipo: " + dataType + " a tipo: Decimal, no valido", this.line, this.column);
+                return new Error("SEMANTICO", "Casteo Inválido: de tipo " + dataType + " a tipo DECIMAL", this.line, this.column);
         }
     }
     
@@ -88,7 +87,7 @@ public class TypeCasting extends Instruction {
                 int aux = (int) expressionToCast;
                 return (char) aux;
             default:
-                return new Error("Semantico", "Casteo de tipo: " + dataType + " a tipo: Caracter, no valido", this.line, this.column);
+                return new Error("SEMANTICO", "Casteo Inválido: de tipo " + dataType + " a tipo CARACTER", this.line, this.column);
         }
     }
 

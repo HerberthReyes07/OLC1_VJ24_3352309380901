@@ -55,7 +55,7 @@ public class Relational extends Instruction {
             case MAYOR_IGUAL:
                 return greaterThanEqualTo(opLeft, opRight);
             default:
-                return new Error("Semantico", "Operador Relacional Invalido", this.line, this.column);
+                return new Error("SEMANTICO", "Operador Relacional Inválido", this.line, this.column);
         }
     }
 
@@ -73,7 +73,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (int) op1 == op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Igualacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -84,7 +84,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (double) op1 == op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Igualacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -95,24 +95,24 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return op1.toString().codePointAt(0) == op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Igualacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case CADENA:
                 switch (type2) {
                     case CADENA:
                         return op1.toString().equals(op2.toString());
                     default:
-                        return new Error("Semantico", "Igualacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos CADENA y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
                         return op1.toString().equalsIgnoreCase(op2.toString());
                     default:
-                        return new Error("Semantico", "Igualacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Igualacion Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -130,7 +130,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (int) op1 != op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -141,7 +141,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (double) op1 != op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -152,24 +152,24 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return op1.toString().codePointAt(0) != op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case CADENA:
                 switch (type2) {
                     case CADENA:
                         return !op1.toString().equals(op2.toString());
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos CADENA y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
                         return !op1.toString().equalsIgnoreCase(op2.toString());
                     default:
-                        return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Diferenciacion Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos" + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -187,7 +187,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (int) op1 < op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -198,7 +198,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (double) op1 < op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -209,24 +209,24 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return op1.toString().codePointAt(0) < op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
                         return op1.toString().equalsIgnoreCase("false") && op2.toString().equalsIgnoreCase("true");
                     default:
-                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos BOOLEAN y " + type2, this.line, this.column);
                 }
             case CADENA:
                 switch (type2) {
                     case CADENA:
                         return op1.toString().length() < op2.toString().length();
                     default:
-                        return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos CADENA y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion: menor que Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -244,7 +244,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (int) op1 <= op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -255,7 +255,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (double) op1 <= op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -266,7 +266,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return op1.toString().codePointAt(0) <= op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
@@ -274,17 +274,17 @@ public class Relational extends Instruction {
                         return (op1.toString().equalsIgnoreCase("false") && op2.toString().equalsIgnoreCase("true"))
                                 || op1.toString().equalsIgnoreCase(op2.toString());
                     default:
-                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             case CADENA:
                 switch (type2) {
                     case CADENA:
                         return op1.toString().length() <= op2.toString().length();
                     default:
-                        return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos CADENA y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion: menor igual que Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -302,7 +302,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (int) op1 > op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -313,7 +313,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (double) op1 > op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -324,24 +324,24 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return op1.toString().codePointAt(0) > op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
                         return op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("false");
                     default:
-                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             case CADENA:
                 switch (type2) {
                     case CADENA:
                         return op1.toString().length() > op2.toString().length();
                     default:
-                        return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos CADENA y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion: mayor que Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -359,7 +359,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (int) op1 >= op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -370,7 +370,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return (double) op1 >= op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -381,7 +381,7 @@ public class Relational extends Instruction {
                     case CARACTER:
                         return op1.toString().codePointAt(0) >= op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
@@ -389,17 +389,17 @@ public class Relational extends Instruction {
                         return (op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("false"))
                                 || op1.toString().equalsIgnoreCase(op2.toString());
                     default:
-                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             case CADENA:
                 switch (type2) {
                     case CADENA:
                         return op1.toString().length() >= op2.toString().length();
                     default:
-                        return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos CADENA y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion: mayor igual que Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 

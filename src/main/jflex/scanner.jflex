@@ -3,11 +3,13 @@ package analysis;
 
 //importaciones
 import java_cup.runtime.Symbol;
+import java.util.LinkedList;
 
 %%
 
 //codigo de usuario
 %{
+    public LinkedList<exceptions.Error> scannerErrors = new LinkedList<>();
 %}
 
 %init{
@@ -149,3 +151,8 @@ KW_FALSE = "false"
 <YYINITIAL> {COMENTARIO_SIM}   {}
 <YYINITIAL> {COMENTARIO_MULT}   {}
 <YYINITIAL> {BLANCOS}   {}
+
+<YYINITIAL> . {
+                scannerErrors.add(new exceptions.Error("LEXICO","El caracter "+
+                yytext()+" NO pertenece al lenguaje", yyline, yycolumn));
+}

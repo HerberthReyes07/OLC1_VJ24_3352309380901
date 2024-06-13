@@ -12,6 +12,7 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import symbol.SymbolTable;
 import symbol.Tree;
+import exceptions.Error;
 
 /**
  *
@@ -21,6 +22,9 @@ public class Interpreter {
 
     private String code;
     private String console;
+    private LinkedList<Error> lexErrors;
+    private LinkedList<Error> syntaxErrors;
+    private LinkedList<Error> semanticErrors;
 
     public void interpret() {
         try {
@@ -52,10 +56,22 @@ public class Interpreter {
             var table = new SymbolTable();
             table.setName("GLOBAL");
             ast.setConsole("");
+            LinkedList<Error> semanticErrors = new LinkedList<>();
+            this.lexErrors = s.scannerErrors;
+            this.syntaxErrors = p.parserErrors;
+            
             for (var a : ast.getInstructions()) {
+                if (a == null) {
+                    continue;
+                }
                 var res = a.interpret(ast, table);
+                if (res instanceof Error) {
+                    semanticErrors.add((Error) res);
+                }
             }
+            this.semanticErrors = semanticErrors;
             this.console = ast.getConsole();
+            
         } catch (Exception ex) {
             System.out.println("Algo salio mal");
             System.out.println(ex);
@@ -74,4 +90,16 @@ public class Interpreter {
         return console;
     }
 
+    public LinkedList<Error> getLexErrors() {
+        return lexErrors;
+    }
+
+    public LinkedList<Error> getSyntaxErrors() {
+        return syntaxErrors;
+    }
+
+    public LinkedList<Error> getSemanticErrors() {
+        return semanticErrors;
+    }
+    
 }

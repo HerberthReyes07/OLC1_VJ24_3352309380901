@@ -75,7 +75,7 @@ public class Arithmetic extends Instruction {
             case NEGACION:
                 return negation(unique);
             default:
-                return new Error("Semantico", "Operador Aritmetico Invalido", this.line, this.column);
+                return new Error("SEMANTICO", "Operador Aritmetico Inválido", this.line, this.column);
         }
     }
 
@@ -99,7 +99,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.CADENA);
                         return op1.toString() + op2.toString();
                     default:
-                        return new Error("Semantico", "Suma Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Suma Inválida: No puede sumar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -116,7 +116,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.CADENA);
                         return op1.toString() + op2.toString();
                     default:
-                        return new Error("Semantico", "Suma Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Suma Inválida: No puede sumar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -133,7 +133,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.CADENA);
                         return op1.toString() + op2.toString();
                     default:
-                        return new Error("Semantico", "Suma Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Suma Inválida: No puede sumar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             case BOOLEANO:
                 switch (type2) {
@@ -141,13 +141,13 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.CADENA);
                         return op1.toString() + op2.toString();
                     default:
-                        return new Error("Semantico", "Suma Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Suma Inválida: No puede sumar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             case CADENA:
                 this.type = new Type(DataType.CADENA);
                 return op1.toString() + op2.toString();
             default:
-                return new Error("Semantico", "Suma Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Suma Inválida: No puede sumar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
 
     }
@@ -169,7 +169,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.ENTERO);
                         return (int) op1 - op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Resta Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Resta Inválida: No puede restar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -183,7 +183,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return (double) op1 - op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Resta Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Resta Inválida: No puede restar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -194,10 +194,10 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return op1.toString().codePointAt(0) - (double) op2;
                     default:
-                        return new Error("Semantico", "Resta Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Resta Inválida: No puede restar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Resta Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Resta Inválida: No puede restar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
 
     }
@@ -219,7 +219,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.ENTERO);
                         return (int) op1 * op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Multiplicacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Multiplicación Inválida: No puede multiplicar los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -233,7 +233,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return (double) op1 * op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Multiplicacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Multiplicación Inválida: No puede multiplicar los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
@@ -244,10 +244,10 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return op1.toString().codePointAt(0) * (double) op2;
                     default:
-                        return new Error("Semantico", "Multiplicacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Multiplicación Inválida: No puede multiplicar los tipos CARACTER y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Multiplicacion Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Multiplicación Inválida: No puede multiplicar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
 
     }
@@ -256,20 +256,35 @@ public class Arithmetic extends Instruction {
 
         DataType type1 = this.operand1.type.getDataType();
         DataType type2 = this.operand2.type.getDataType();
+        
+        if (type2 == DataType.ENTERO) {
+            if ((int) op2 == 0) {
+                return new Error("SEMANTICO", "División Inválida: No puede dividir entre 0", this.line, this.column);
+            }
+        } else if (type2 == DataType.DECIMAL) {
+            if ((double) op2 == 0.0) {
+                return new Error("SEMANTICO", "División Inválida: No puede dividir entre 0", this.line, this.column);
+            }
+        }
+        
         switch (type1) {
             case ENTERO:
                 switch (type2) {
                     case ENTERO:
                         this.type = new Type(DataType.DECIMAL);
-                        return (int) op1 / (int) op2;
+                        int a = (int) op1;
+                        int b = (int) op2;
+                        return (double) a / b;
                     case DECIMAL:
                         this.type = new Type(DataType.DECIMAL);
                         return (int) op1 / (double) op2;
                     case CARACTER:
                         this.type = new Type(DataType.DECIMAL);
-                        return (int) op1 / op2.toString().codePointAt(0);
+                        int a2 = (int) op1;
+                        int b2 = op2.toString().codePointAt(0);
+                        return (double) a2 / b2;
                     default:
-                        return new Error("Semantico", "Division Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "División Inválida: No puede dividir los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -283,21 +298,23 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return (double) op1 / op2.toString().codePointAt(0);
                     default:
-                        return new Error("Semantico", "Division Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "División Inválida: No puede dividir los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             case CARACTER:
                 switch (type2) {
                     case ENTERO:
                         this.type = new Type(DataType.DECIMAL);
-                        return op1.toString().codePointAt(0) / (int) op2;
+                        int a = op1.toString().codePointAt(0);
+                        int b = (int) op2;
+                        return (double) a / b;
                     case DECIMAL:
                         this.type = new Type(DataType.DECIMAL);
                         return op1.toString().codePointAt(0) / (double) op2;
                     default:
-                        return new Error("Semantico", "Division Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "División Inválida: No puede dividir los tipos CARACTER y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Division Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "División Inválida: No puede dividir los tipos " + type1 + " y " + type2, this.line, this.column);
         }
 
     }
@@ -316,7 +333,7 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return Math.pow((int) op1, (double) op2);
                     default:
-                        return new Error("Semantico", "Pontenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Potenciación Inválida: No puede potenciar el tipo ENTERO a el tipo " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -327,10 +344,10 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return Math.pow((double) op1, (double) op2);
                     default:
-                        return new Error("Semantico", "Pontenciacion Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Potenciación Inválida: No puede potenciar el tipo DECIMAL a el tipo " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Pontenciacion Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Potenciación Inválida: No puede potenciar el tipo " + type1 + " a el tipo " + type2, this.line, this.column);
         }
 
     }
@@ -344,12 +361,14 @@ public class Arithmetic extends Instruction {
                 switch (type2) {
                     case ENTERO:
                         this.type = new Type(DataType.DECIMAL);
-                        return (int) op1 % (int) op1;
+                        int a = (int) op1;
+                        int b = (int) op2;
+                        return (double) (a % b);
                     case DECIMAL:
                         this.type = new Type(DataType.DECIMAL);
                         return (int) op1 % (double) op2;
                     default:
-                        return new Error("Semantico", "Modulo Invalido", this.line, this.column);
+                        return new Error("SEMANTICO", "Módulo Inválido: No puede obtener el módulo entre los tipos ENTERO y " + type2, this.line, this.column);
                 }
             case DECIMAL:
                 switch (type2) {
@@ -360,10 +379,10 @@ public class Arithmetic extends Instruction {
                         this.type = new Type(DataType.DECIMAL);
                         return (double) op1 % (double) op2;
                     default:
-                        return new Error("Semantico", "Modulo Invalido", this.line, this.column);
+                        return new Error("SEMANTICO", "Módulo Inválido: No puede obtener el módulo entre los tipos DECIMAL y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Modulo Invalido", this.line, this.column);
+                return new Error("SEMANTICO", "Módulo Inválido: No puede obtener el módulo entre los tipos " + type1 + " y " + type2, this.line, this.column);
         }
 
     }
@@ -379,7 +398,7 @@ public class Arithmetic extends Instruction {
                 this.type = new Type(DataType.DECIMAL);
                 return (double) op1 * -1;
             default:
-                return new Error("Semantico", "Negacion Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Negación Unaria Inválida: No puede obtener la Negación Unaria del tipo " + opU, this.line, this.column);
         }
     }
 }

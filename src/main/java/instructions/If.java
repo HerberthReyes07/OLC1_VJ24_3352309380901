@@ -62,13 +62,32 @@ public class If extends Instruction {
                 } else {
                 }*/
             default:
-                return new Error("Semantico", "Operacion Logica en Sentencia If Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación Lógica en Sentencia If Inválida", this.line, this.column);
         }
     }
 
     private Object executeIf(Object condition, Tree tree, SymbolTable table) {
 
-        DataType type1 = this.expression.type.getDataType();
+        if (condition.toString().equalsIgnoreCase("true")) {
+            Object res1 = null;
+            for (var a : this.instructions1) {
+                res1 = a.interpret(tree, table);
+            }
+            return res1;
+        } else {
+            if (this.instructions2 != null) {
+                Object res2 = null;
+                for (var a : instructions2) {
+                    res2 = a.interpret(tree, table);
+                }
+                return res2;
+            } else if (this.instruction3 != null) {
+                return instruction3.interpret(tree, table);
+            }
+            return null;
+        }
+
+        /*DataType type1 = this.expression.type.getDataType();
 
         switch (type1) {
             case BOOLEANO:
@@ -92,9 +111,8 @@ public class If extends Instruction {
                     return null;
                 }
             default:
-                return new Error("Semantico", "Condicion Invalida", this.line, this.column);
-        }
-
+                return new Error("SEMANTICO", "Condicion Invalida", this.line, this.column);
+        }*/
     }
 
 }

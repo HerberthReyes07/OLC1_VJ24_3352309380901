@@ -69,7 +69,7 @@ public class Logical extends Instruction {
             case NOT:
                 return not(unique);
             default:
-                return new Error("Semantico", "Operador Logico Invalido", this.line, this.column);
+                return new Error("SEMANTICO", "Operador Lógico Inválido", this.line, this.column);
         }
     }
 
@@ -83,10 +83,10 @@ public class Logical extends Instruction {
                     case BOOLEANO:
                         return op1.toString().equalsIgnoreCase("true") || op2.toString().equalsIgnoreCase("true");
                     default:
-                        return new Error("Semantico", "Operacion logica OR Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación lógica OR (||) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion logica OR Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación lógica OR (||) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -100,10 +100,10 @@ public class Logical extends Instruction {
                     case BOOLEANO:
                         return op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("true");
                     default:
-                        return new Error("Semantico", "Operacion logica AND Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación lógica AND (&&) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion logica AND Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación lógica AND (&&) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -117,10 +117,10 @@ public class Logical extends Instruction {
                     case BOOLEANO:
                         return !op1.toString().equalsIgnoreCase(op2.toString());
                     default:
-                        return new Error("Semantico", "Operacion logica XOR Invalida", this.line, this.column);
+                        return new Error("SEMANTICO", "Operación lógica XOR (^) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
             default:
-                return new Error("Semantico", "Operacion logica XOR Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación lógica XOR (^) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
         }
     }
 
@@ -131,7 +131,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 return opU.toString().equalsIgnoreCase("false");
             default:
-                return new Error("Semantico", "Operacion logica NOT Invalida", this.line, this.column);
+                return new Error("SEMANTICO", "Operación lógica NOT (!) Inválida: no puede negar el tipo " + opU, this.line, this.column);
         }
     }
 

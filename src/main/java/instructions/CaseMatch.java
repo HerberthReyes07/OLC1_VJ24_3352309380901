@@ -36,11 +36,14 @@ public class CaseMatch extends Instruction {
         }
 
         DataType typeE = this.expression.type.getDataType();
-        if (typeE == DataType.ENTERO || typeE == DataType.DECIMAL || typeE == DataType.BOOLEANO || typeE == DataType.CARACTER || typeE == DataType.CADENA) {
+        /*if (typeE == DataType.ENTERO || typeE == DataType.DECIMAL || typeE == DataType.BOOLEANO || typeE == DataType.CARACTER || typeE == DataType.CADENA) {
+            return executeCase(caseM, tree, table);
+        }*/
+        if (typeE != DataType.VOID) {
             return executeCase(caseM, tree, table);
         }
 
-        return new Error("Semantico", "Operacion Logica en Caso Match Invalida", this.line, this.column);
+        return new Error("SEMANTICO", "Operación Lógica en Caso Match Inválida", this.line, this.column);
 
     }
 
