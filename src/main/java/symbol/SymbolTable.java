@@ -27,6 +27,27 @@ public class SymbolTable {
         this.name = "";
     }
 
+    public boolean setVariable(Symbol symbol) {
+        Symbol search
+                = (Symbol) this.currentTable.get(symbol.getId().
+                                toLowerCase());
+        if (search == null) {
+            this.currentTable.put(symbol.getId().toLowerCase(),
+                    symbol);
+            return true;
+        }
+        return false;
+    }
+
+    public Symbol getVariable(String id) {
+        Symbol search = (Symbol) this.currentTable.
+                get(id.toLowerCase());
+        if (search != null) {
+            return search;
+        }
+        return null;
+    }
+    
     public SymbolTable getPreviousTable() {
         return previousTable;
     }

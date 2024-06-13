@@ -352,9 +352,9 @@ public class MainInterface extends javax.swing.JFrame {
                 output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
             }
             //errores semanticos
-            /*for (var a : this.semanticErrors) {
+            for (var a : this.semanticErrors) {
                 output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
-            }*/
+            }
 
             outputs.set(jTabbedPane1.getSelectedIndex(), output);
             jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));

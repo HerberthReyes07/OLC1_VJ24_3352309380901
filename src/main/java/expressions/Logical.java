@@ -126,12 +126,12 @@ public class Logical extends Instruction {
 
     public Object not(Object op1) {
 
-        DataType opU = this.uniqueOperand.type.getDataType();
-        switch (opU) {
+        DataType typeUOp = this.uniqueOperand.type.getDataType();
+        switch (typeUOp) {
             case BOOLEANO:
-                return opU.toString().equalsIgnoreCase("false");
+                return op1.toString().equalsIgnoreCase("false");
             default:
-                return new Error("SEMANTICO", "Operación lógica NOT (!) Inválida: no puede negar el tipo " + opU, this.line, this.column);
+                return new Error("SEMANTICO", "Operación lógica NOT (!) Inválida: no puede negar el tipo " + typeUOp, this.line, this.column);
         }
     }
 
