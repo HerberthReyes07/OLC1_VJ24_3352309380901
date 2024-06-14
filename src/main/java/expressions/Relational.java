@@ -107,6 +107,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
+                        System.out.println(Boolean.valueOf(op1.toString()));
                         return op1.toString().equalsIgnoreCase(op2.toString());
                     default:
                         return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);

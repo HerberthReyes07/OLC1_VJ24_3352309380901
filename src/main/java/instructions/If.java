@@ -55,7 +55,7 @@ public class If extends Instruction {
         }
 
         if (this.condition.type.getDataType() != DataType.BOOLEANO) {
-            return new Error("SEMANTICO", "Operación Lógica en Sentencia If Inválida", this.line, this.column);
+            return new Error("SEMANTICO", "Condición en Sentencia If Inválida", this.line, this.column);
         }
         return executeIf(cond, tree, table);
     }

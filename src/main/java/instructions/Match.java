@@ -72,7 +72,6 @@ public class Match extends Instruction {
                 }
 
                 if (a.getExpression().type.getDataType() == type1 && aux.toString().equals(condition.toString())) {
-                    //a.interpret(tree, newTable);
                     var res1 = a.interpret(tree, newTable);
                     if (res1 instanceof Error) {
                         return res1; //TERMINA LA SECUENCIA DEL MATCH
@@ -83,22 +82,16 @@ public class Match extends Instruction {
         }
 
         if (this.defaultMatch != null) {
-            /*Object res = null;
-            for (var a : this.defaultMatch) {
-                res = a.interpret(tree, table);
-            }
-            return res;*/
             for (var a : this.defaultMatch) {
                 if (a == null) {
                     continue;
                 }
                 var res1 = a.interpret(tree, newTable);
                 if (res1 instanceof Error) {
-                    return res1; //TERMINA LA SECUENCIA DEL IF
+                    return res1; //TERMINA LA SECUENCIA DEL MATCH
                 }
             }
         }
-
         return null;
     }
 

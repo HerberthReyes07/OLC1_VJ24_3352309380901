@@ -36,9 +36,6 @@ public class CaseMatch extends Instruction {
         }
 
         DataType typeE = this.condition.type.getDataType();
-        /*if (typeE == DataType.ENTERO || typeE == DataType.DECIMAL || typeE == DataType.BOOLEANO || typeE == DataType.CARACTER || typeE == DataType.CADENA) {
-            return executeCase(caseM, tree, table);
-        }*/
         if (typeE != DataType.VOID) {
             return executeCase(caseM, tree, table);
         }
@@ -49,11 +46,6 @@ public class CaseMatch extends Instruction {
 
     private Object executeCase(Object caseM, Tree tree, SymbolTable table) {
 
-        /*Object res = null;
-        for (var a : this.instructions) {
-            res = a.interpret(tree, table);
-        }
-        return res;*/
         var newTable = new SymbolTable(table);
         for (var a : this.instructions) {
             if (a == null) {

@@ -16,6 +16,8 @@ import instructions.VariableAssignment;
 import instructions.If;
 import instructions.Match;
 import instructions.CaseMatch;
+import instructions.While;
+import instructions.DoWhile;
 
 //expresiones
 import expressions.Native;
@@ -70,6 +72,7 @@ nonterminal MutabilityType MUTABILIDAD;
 nonterminal Instruction INSTRUCCION;
 nonterminal Instruction EXPRESION;
 nonterminal Instruction PRINTLN, DECLARACION, ASIGNACION, SENTENCIA_IF, SENTENCIA_MATCH, CASTEO, INCREMENTO_DECREMENTO;
+nonterminal Instruction SENTENCIA_WHILE, SENTENCIA_DO_WHILE;
 
 //precedencia
 precedence left OR;
@@ -97,6 +100,8 @@ INSTRUCCION ::= PRINTLN:a PUNTO_COMA        {:   RESULT = a;   :}
               | INCREMENTO_DECREMENTO:a PUNTO_COMA    {:   RESULT = a;   :}
               | SENTENCIA_IF:a              {:   RESULT = a;   :}
               | SENTENCIA_MATCH:a           {:   RESULT = a;   :}
+              | SENTENCIA_WHILE:a           {:   RESULT = a;   :}
+              | SENTENCIA_DO_WHILE:a PUNTO_COMA          {:   RESULT = a;   :}
               | error PUNTO_COMA
               | error 
 ;
@@ -175,4 +180,10 @@ CASO_MATCH ::= EXPRESION:a IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER  
 ;
 
 DEFAULT_MATCH ::= GUION_BAJO IGUAL MAYOR_QUE LLAVE_IZQ INSTRUCCIONES:a LLAVE_DER  {:   RESULT = a;   :}
+;
+
+SENTENCIA_WHILE ::= KW_WHILE PAR_IZQ EXPRESION:a PAR_DER LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER    {:   RESULT = new While(a, b, aleft, aright );   :}
+;
+
+SENTENCIA_DO_WHILE ::= KW_DO LLAVE_IZQ INSTRUCCIONES:a LLAVE_DER KW_WHILE PAR_IZQ EXPRESION:b PAR_DER    {:   RESULT = new DoWhile(a, b, aleft, aright );   :}
 ;
