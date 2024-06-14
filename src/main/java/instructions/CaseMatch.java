@@ -18,24 +18,24 @@ import java.util.LinkedList;
  */
 public class CaseMatch extends Instruction {
 
-    private Instruction expression;
+    private Instruction condition;
     private LinkedList<Instruction> instructions;
 
-    public CaseMatch(Instruction expression, LinkedList<Instruction> instructions, int line, int column) {
+    public CaseMatch(Instruction condition, LinkedList<Instruction> instructions, int line, int column) {
         super(new Type(DataType.VOID), line, column);
         this.instructions = instructions;
-        this.expression = expression;
+        this.condition = condition;
     }
 
     @Override
     public Object interpret(Tree tree, SymbolTable table) {
 
-        var caseM = this.expression.interpret(tree, table);
+        var caseM = this.condition.interpret(tree, table);
         if (caseM instanceof exceptions.Error) {
             return caseM;
         }
 
-        DataType typeE = this.expression.type.getDataType();
+        DataType typeE = this.condition.type.getDataType();
         /*if (typeE == DataType.ENTERO || typeE == DataType.DECIMAL || typeE == DataType.BOOLEANO || typeE == DataType.CARACTER || typeE == DataType.CADENA) {
             return executeCase(caseM, tree, table);
         }*/
@@ -49,15 +49,26 @@ public class CaseMatch extends Instruction {
 
     private Object executeCase(Object caseM, Tree tree, SymbolTable table) {
 
-        Object res = null;
+        /*Object res = null;
         for (var a : this.instructions) {
             res = a.interpret(tree, table);
         }
-        return res;
+        return res;*/
+        var newTable = new SymbolTable(table);
+        for (var a : this.instructions) {
+            if (a == null) {
+                continue;
+            }
+            var res1 = a.interpret(tree, newTable);
+            if (res1 instanceof Error) {
+                return res1; //TERMINA LA SECUENCIA DEL IF
+            }
+        }
+        return null;
     }
 
     public Instruction getExpression() {
-        return expression;
+        return condition;
     }
 
 }

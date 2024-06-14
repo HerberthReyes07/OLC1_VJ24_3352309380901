@@ -59,6 +59,7 @@ public class Interpreter {
             LinkedList<Error> semanticErrors = new LinkedList<>();
             this.lexErrors = s.scannerErrors;
             this.syntaxErrors = p.parserErrors;
+            //this.semanticErrors = semanticErrors;
             
             for (var a : ast.getInstructions()) {
                 if (a == null) {
@@ -69,6 +70,7 @@ public class Interpreter {
                     semanticErrors.add((Error) res);
                 }
             }
+            
             this.semanticErrors = semanticErrors;
             this.console = ast.getConsole();
             

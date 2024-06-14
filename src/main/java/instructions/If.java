@@ -18,101 +18,81 @@ import symbol.DataType;
  */
 public class If extends Instruction {
 
-    private Instruction expression;
-    private LinkedList<Instruction> instructions1;
-    private LinkedList<Instruction> instructions2;
-    private Instruction instruction3;
+    private Instruction condition;
+    private LinkedList<Instruction> instructionsIf;
+    private LinkedList<Instruction> instructionsElse;
+    private Instruction elseIf;
 
     //IF
-    public If(Instruction expression, LinkedList<Instruction> instructions1, int line, int column) {
+    public If(Instruction condition, LinkedList<Instruction> instructionsIf, int line, int column) {
         super(new Type(DataType.VOID), line, column);
-        this.expression = expression;
-        this.instructions1 = instructions1;
+        this.condition = condition;
+        this.instructionsIf = instructionsIf;
     }
 
     //IF-ELSE
-    public If(Instruction expression, LinkedList<Instruction> instructions1, LinkedList<Instruction> instructions2, int line, int column) {
+    public If(Instruction condition, LinkedList<Instruction> instructionsIf, LinkedList<Instruction> instructionsElse, int line, int column) {
         super(new Type(DataType.VOID), line, column);
-        this.expression = expression;
-        this.instructions1 = instructions1;
-        this.instructions2 = instructions2;
+        this.condition = condition;
+        this.instructionsIf = instructionsIf;
+        this.instructionsElse = instructionsElse;
     }
 
     //IF-ELSE-IF
-    public If(Instruction expression, LinkedList<Instruction> instructions1, Instruction instruction3, int line, int column) {
+    public If(Instruction condition, LinkedList<Instruction> instructionsIf, Instruction elseIf, int line, int column) {
         super(new Type(DataType.VOID), line, column);
-        this.expression = expression;
-        this.instructions1 = instructions1;
-        this.instruction3 = instruction3;
+        this.condition = condition;
+        this.instructionsIf = instructionsIf;
+        this.elseIf = elseIf;
     }
 
     @Override
     public Object interpret(Tree tree, SymbolTable table) {
 
-        var condition = this.expression.interpret(tree, table);
-        if (condition instanceof Error) {
-            return condition;
+        var cond = this.condition.interpret(tree, table);
+        if (cond instanceof Error) {
+            return cond;
         }
 
-        switch (this.expression.type.getDataType()) {
-            case BOOLEANO:
-                return executeIf(condition, tree, table);
-            /*if (instructions2.isEmpty()) {
-                    return executeIf(condition, tree, table);
-                } else {
-                }*/
-            default:
-                return new Error("SEMANTICO", "Operación Lógica en Sentencia If Inválida", this.line, this.column);
+        if (this.condition.type.getDataType() != DataType.BOOLEANO) {
+            return new Error("SEMANTICO", "Operación Lógica en Sentencia If Inválida", this.line, this.column);
         }
+        return executeIf(cond, tree, table);
     }
 
     private Object executeIf(Object condition, Tree tree, SymbolTable table) {
 
+        var newTable = new SymbolTable(table);
+
         if (condition.toString().equalsIgnoreCase("true")) {
-            Object res1 = null;
-            for (var a : this.instructions1) {
-                res1 = a.interpret(tree, table);
+            for (var a : this.instructionsIf) {
+                if (a == null) {
+                    continue;
+                }
+                var res1 = a.interpret(tree, newTable);
+                if (res1 instanceof Error) {
+                    return res1; //TERMINA LA SECUENCIA DEL IF
+                }
             }
-            return res1;
         } else {
-            if (this.instructions2 != null) {
-                Object res2 = null;
-                for (var a : instructions2) {
-                    res2 = a.interpret(tree, table);
-                }
-                return res2;
-            } else if (this.instruction3 != null) {
-                return instruction3.interpret(tree, table);
-            }
-            return null;
-        }
-
-        /*DataType type1 = this.expression.type.getDataType();
-
-        switch (type1) {
-            case BOOLEANO:
-                if (condition.toString().equalsIgnoreCase("true")) {
-                    Object res1 = null;
-                    for (var a : this.instructions1) {
-                        res1 = a.interpret(tree, table);
+            if (this.instructionsElse != null) {
+                for (var a : this.instructionsElse) {
+                    if (a == null) {
+                        continue;
                     }
-                    return res1;
-                } else {
-                    
-                    if (this.instructions2 != null) {
-                        Object res2 = null;
-                        for (var a : instructions2) {
-                            res2 = a.interpret(tree, table);
-                        }
+                    var res2 = a.interpret(tree, newTable);
+                    if (res2 instanceof Error) {
                         return res2;
-                    } else if (this.instruction3 != null){
-                        return instruction3.interpret(tree, table);
                     }
-                    return null;
                 }
-            default:
-                return new Error("SEMANTICO", "Condicion Invalida", this.line, this.column);
-        }*/
+            } else if (this.elseIf != null) {
+                var res3 = elseIf.interpret(tree, newTable);
+                if (res3 instanceof Error) {
+                    return res3;
+                }
+            }
+        }
+        return null;
     }
 
 }

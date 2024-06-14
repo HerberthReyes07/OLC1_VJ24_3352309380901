@@ -342,7 +342,7 @@ public class MainInterface extends javax.swing.JFrame {
             this.lexErrors = interpreter.getLexErrors();
             this.syntaxErrors = interpreter.getSyntaxErrors();
             this.semanticErrors = interpreter.getSemanticErrors();
-
+            
             //errores lexicos
             for (var a : this.lexErrors) {
                 output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
