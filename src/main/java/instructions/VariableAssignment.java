@@ -19,11 +19,18 @@ public class VariableAssignment extends Instruction {
 
     private String id;
     private Instruction value;
+    private String incrementDecrement;
 
     public VariableAssignment(String id, Instruction value, int line, int column) {
         super(new Type(DataType.VOID), line, column);
         this.id = id;
         this.value = value;
+    }
+
+    public VariableAssignment(String id, String incrementDecrement, int line, int column) {
+        super(new Type(DataType.VOID), line, column);
+        this.id = id;
+        this.incrementDecrement = incrementDecrement;
     }
 
     @Override
@@ -40,17 +47,42 @@ public class VariableAssignment extends Instruction {
                     this.line, this.column);
         }
 
-        // interpretar el nuevo valor a asignar
-        var newValue = this.value.interpret(tree, table);
-        if (newValue instanceof Error) {
-            return newValue;
+        Object newValue;
+
+        if (this.incrementDecrement == null) {
+            // interpretar el nuevo valor a asignar
+            newValue = this.value.interpret(tree, table);
+            if (newValue instanceof Error) {
+                return newValue;
+            }
+
+            //validar tipos
+            if (variable.getType().getDataType() != this.value.type.getDataType()) {
+                return new Error("SEMANTICO", "Asignación Inválida: No puede asignarle a una variable declarada con el tipo " + variable.getType().getDataType() + " un valor del tipo " + this.value.type.getDataType(),
+                        this.line, this.column);
+            }
+        } else {
+
+            if (variable.getType().getDataType() != DataType.ENTERO && variable.getType().getDataType() != DataType.DECIMAL) {
+                return new Error("SEMANTICO", this.incrementDecrement + " Inválido: No puede realizar el " + this.incrementDecrement + " de una variable declarada con el tipo " + variable.getType().getDataType(),
+                        this.line, this.column);
+            }
+
+            if (this.incrementDecrement.equals("Incremento")) {
+                if (variable.getType().getDataType() == DataType.ENTERO) {
+                    newValue = (int) variable.getValue() + 1;
+                } else {
+                    newValue = (double) variable.getValue() + 1.0;
+                }
+            } else {
+                if (variable.getType().getDataType() == DataType.ENTERO) {
+                    newValue = (int) variable.getValue() - 1;
+                } else {
+                    newValue = (double) variable.getValue() - 1.0;
+                }
+            }
         }
 
-        //validar tipos
-        if (variable.getType().getDataType() != this.value.type.getDataType()) {
-            return new Error("SEMANTICO", "Asignación Inválida: No puede asignarle a una variable declarada con el tipo " + variable.getType().getDataType() + " un valor del tipo " + this.value.type.getDataType(),
-                    this.line, this.column);
-        }
         //this.tipo.setTipo(variable.getTipo().getTipo());
         variable.setValue(newValue);
         return null;

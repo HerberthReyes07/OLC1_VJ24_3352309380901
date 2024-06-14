@@ -8,60 +8,62 @@ package analysis;
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int PAR_DER = 45;
-  public static final int KW_FALSE = 31;
+  public static final int PAR_DER = 47;
+  public static final int KW_FALSE = 33;
   public static final int POT = 8;
-  public static final int MULT = 34;
-  public static final int KW_INT = 16;
+  public static final int MULT = 36;
+  public static final int KW_INT = 18;
   public static final int ENTERO = 4;
-  public static final int KW_FOR = 25;
-  public static final int XOR = 42;
-  public static final int KW_DO = 26;
-  public static final int DOS_PUNTOS = 51;
-  public static final int KW_DOUBLE = 17;
-  public static final int KW_CHAR = 19;
-  public static final int CORCHETE_DER = 49;
-  public static final int KW_CONST = 14;
-  public static final int KW_PRINTLN = 29;
-  public static final int LLAVE_IZQ = 46;
-  public static final int NOT = 43;
-  public static final int AND = 41;
-  public static final int IGUAL = 37;
+  public static final int KW_FOR = 27;
+  public static final int XOR = 44;
+  public static final int KW_DO = 28;
+  public static final int DOS_PUNTOS = 53;
+  public static final int KW_DOUBLE = 19;
+  public static final int KW_CHAR = 21;
+  public static final int CORCHETE_DER = 51;
+  public static final int KW_CONST = 16;
+  public static final int KW_PRINTLN = 31;
+  public static final int LLAVE_IZQ = 48;
+  public static final int NOT = 45;
+  public static final int AND = 43;
+  public static final int IGUAL = 39;
   public static final int CARACTER = 3;
-  public static final int OR = 40;
-  public static final int KW_MATCH = 23;
-  public static final int DIV = 35;
+  public static final int OR = 42;
+  public static final int KW_MATCH = 25;
+  public static final int DIV = 37;
+  public static final int INCREMENTO = 14;
   public static final int UMENOS = 7;
-  public static final int PUNTO_COMA = 50;
-  public static final int KW_BOOL = 18;
+  public static final int PUNTO_COMA = 52;
+  public static final int KW_BOOL = 20;
   public static final int ID = 6;
-  public static final int KW_CONTINUE = 28;
+  public static final int KW_CONTINUE = 30;
   public static final int EOF = 0;
   public static final int DECIMAL = 5;
+  public static final int DECREMENTO = 15;
   public static final int error = 1;
-  public static final int COMA = 53;
+  public static final int COMA = 55;
   public static final int CADENA = 2;
+  public static final int MENOS = 35;
   public static final int DIF = 10;
-  public static final int MENOS = 33;
-  public static final int MAYOR_QUE = 39;
-  public static final int MOD = 36;
-  public static final int PAR_IZQ = 44;
-  public static final int KW_TRUE = 30;
-  public static final int KW_IF = 21;
+  public static final int MAYOR_QUE = 41;
+  public static final int MOD = 38;
+  public static final int PAR_IZQ = 46;
+  public static final int KW_TRUE = 32;
+  public static final int KW_IF = 23;
   public static final int IGLCN = 9;
-  public static final int GUION_BAJO = 52;
-  public static final int LLAVE_DER = 47;
-  public static final int KW_BREAK = 27;
+  public static final int GUION_BAJO = 54;
+  public static final int LLAVE_DER = 49;
+  public static final int KW_BREAK = 29;
   public static final int CASTEO_PREC = 13;
-  public static final int CORCHETE_IZQ = 48;
+  public static final int CORCHETE_IZQ = 50;
   public static final int MAYOR_IGUAL = 12;
-  public static final int KW_ELSE = 22;
-  public static final int KW_STRING = 20;
-  public static final int KW_VAR = 15;
-  public static final int MENOR_QUE = 38;
-  public static final int KW_WHILE = 24;
+  public static final int KW_ELSE = 24;
+  public static final int KW_STRING = 22;
+  public static final int KW_VAR = 17;
+  public static final int MENOR_QUE = 40;
+  public static final int KW_WHILE = 26;
   public static final int MENOR_IGUAL = 11;
-  public static final int MAS = 32;
+  public static final int MAS = 34;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -77,6 +79,8 @@ public interface sym {
   "MENOR_IGUAL",
   "MAYOR_IGUAL",
   "CASTEO_PREC",
+  "INCREMENTO",
+  "DECREMENTO",
   "KW_CONST",
   "KW_VAR",
   "KW_INT",
