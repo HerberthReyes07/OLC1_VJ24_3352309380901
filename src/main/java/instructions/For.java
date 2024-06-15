@@ -16,38 +16,50 @@ import exceptions.Error;
  *
  * @author herberthreyes
  */
-public class While extends Instruction {
-
+public class For extends Instruction{
+    
+    private Instruction assignation;
     private Instruction condition;
+    private Instruction update;
     private LinkedList<Instruction> instructions;
 
-    public While(Instruction condition, LinkedList<Instruction> instructions, int line, int column) {
+    public For(Instruction assignation, Instruction condition, Instruction update, LinkedList<Instruction> instructions, int line, int column) {
         super(new Type(DataType.VOID), line, column);
+        this.assignation = assignation;
         this.condition = condition;
+        this.update = update;
         this.instructions = instructions;
     }
 
     @Override
     public Object interpret(Tree tree, SymbolTable table) {
-        var cond = this.condition.interpret(tree, table);
-
+        
+        var newTable = new SymbolTable(table);
+        
+        var asig = assignation.interpret(tree, newTable);
+        if (asig instanceof Error) {
+            return asig;
+        }
+        
+        var cond = this.condition.interpret(tree, newTable);
         if (cond instanceof Error) {
             return cond;
         }
 
         if (this.condition.type.getDataType() != DataType.BOOLEANO) {
-            return new Error("SEMANTICO", "Condición en Sentencia While Inválida", this.line, this.column);
+            return new Error("SEMANTICO", "Condición en Sentencia If Inválida", this.line, this.column);
         }
-
-        return executeWhile(tree, table);
+        
+        return executeFor(tree, newTable);
     }
-
-    private Object executeWhile(Tree tree, SymbolTable table) {
-
-        while (Boolean.parseBoolean(this.condition.interpret(tree, table).toString())) {
-            var newTable = new SymbolTable(table);
-            newTable.setName("SENTENCIA WHILE");
-
+    
+    private Object executeFor(Tree tree, SymbolTable newTable){
+        
+        while ((boolean) this.condition.interpret(tree, newTable)) {
+            //nuevo entorno
+            var newTable2 = new SymbolTable(newTable);
+            newTable2.setName("SENTENCIA FOR ");
+            //ejecutar instrucciones
             for (var a : this.instructions) {
                 if (a == null) {
                     continue;
@@ -58,9 +70,9 @@ public class While extends Instruction {
                 if (a instanceof Continue) {
                     break;
                 }
-                var res1 = a.interpret(tree, newTable);
+                var res1 = a.interpret(tree, newTable2);
                 if (res1 instanceof Error) {
-                    return res1; //TERMINA LA SECUENCIA DEL WHILE
+                    return res1; //TERMINA LA SECUENCIA DEL IF
                 }
                 if (res1 instanceof Break) {
                     return null;
@@ -69,8 +81,17 @@ public class While extends Instruction {
                     break;
                 }
             }
+
+            //actualizar la variable
+            var act = this.update.interpret(tree, newTable);
+            if (act instanceof Error) {
+                return act;
+            }
         }
         return null;
     }
-
+    
+    
+    
+    
 }

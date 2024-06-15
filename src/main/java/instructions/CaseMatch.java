@@ -51,9 +51,15 @@ public class CaseMatch extends Instruction {
             if (a == null) {
                 continue;
             }
+            if (a instanceof Break || a instanceof Continue) {
+                return a;
+            }
             var res1 = a.interpret(tree, newTable);
             if (res1 instanceof Error) {
                 return res1; //TERMINA LA SECUENCIA DEL IF
+            }
+            if (res1 instanceof Break || res1 instanceof Continue) {
+                return res1;
             }
         }
         return null;

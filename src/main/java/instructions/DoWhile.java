@@ -53,9 +53,21 @@ public class DoWhile extends Instruction {
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Break) {
+                    return null;
+                }
+                if (a instanceof Continue) {
+                    break;
+                }
                 var res1 = a.interpret(tree, newTable);
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL DO-WHILE
+                }
+                if (res1 instanceof Break) {
+                    return null;
+                }
+                if (res1 instanceof Continue) {
+                    break;
                 }
             }
         } while (Boolean.parseBoolean(this.condition.interpret(tree, table).toString()));

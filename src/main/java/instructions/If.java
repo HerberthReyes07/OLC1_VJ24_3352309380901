@@ -69,9 +69,15 @@ public class If extends Instruction {
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Break || a instanceof Continue) {
+                    return a;
+                }
                 var res1 = a.interpret(tree, newTable);
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL IF
+                }
+                if (res1 instanceof Break || res1 instanceof Continue) {
+                    return res1;
                 }
             }
         } else {
@@ -80,14 +86,23 @@ public class If extends Instruction {
                     if (a == null) {
                         continue;
                     }
+                    if (a instanceof Break || a instanceof Continue) {
+                        return a;
+                    }
                     var res2 = a.interpret(tree, newTable);
                     if (res2 instanceof Error) {
+                        return res2;
+                    }
+                    if (res2 instanceof Break || res2 instanceof Continue) {
                         return res2;
                     }
                 }
             } else if (this.elseIf != null) {
                 var res3 = elseIf.interpret(tree, newTable);
                 if (res3 instanceof Error) {
+                    return res3;
+                }
+                if (res3 instanceof Break || res3 instanceof Continue) {
                     return res3;
                 }
             }

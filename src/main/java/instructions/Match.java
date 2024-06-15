@@ -65,7 +65,7 @@ public class Match extends Instruction {
                 if (a == null) {
                     continue;
                 }
-
+                
                 var aux = a.getExpression().interpret(tree, table);
                 if (aux instanceof Error) {
                     return aux; //TERMINA LA SECUENCIA DEL MATCH
