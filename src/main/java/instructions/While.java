@@ -44,7 +44,7 @@ public class While extends Instruction {
 
     private Object executeWhile(Tree tree, SymbolTable table) {
 
-        while (Boolean.parseBoolean(this.condition.interpret(tree, table).toString())) {
+        while ((boolean) this.condition.interpret(tree, table)) {
             var newTable = new SymbolTable(table);
             newTable.setName("SENTENCIA WHILE");
 

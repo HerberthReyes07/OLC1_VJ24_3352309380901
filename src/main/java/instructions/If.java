@@ -64,7 +64,7 @@ public class If extends Instruction {
 
         var newTable = new SymbolTable(table);
 
-        if (condition.toString().equalsIgnoreCase("true")) {
+        if ((boolean) condition) {
             for (var a : this.instructionsIf) {
                 if (a == null) {
                     continue;

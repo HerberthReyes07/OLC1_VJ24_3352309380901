@@ -107,8 +107,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        System.out.println(Boolean.valueOf(op1.toString()));
-                        return op1.toString().equalsIgnoreCase(op2.toString());
+                        return (boolean) op1 == (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Igualación (==) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -165,7 +164,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return !op1.toString().equalsIgnoreCase(op2.toString());
+                        return (boolean) op1 != (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Diferenciación (!=) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -215,7 +214,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return op1.toString().equalsIgnoreCase("false") && op2.toString().equalsIgnoreCase("true");
+                        return ((boolean) op1 == false) && ((boolean) op2 == true);
                     default:
                         return new Error("SEMANTICO", "Operación Relacional menor que (<) Inválida: no puede comparar los tipos BOOLEAN y " + type2, this.line, this.column);
                 }
@@ -272,8 +271,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return (op1.toString().equalsIgnoreCase("false") && op2.toString().equalsIgnoreCase("true"))
-                                || op1.toString().equalsIgnoreCase(op2.toString());
+                        return ((boolean) op1 == false && (boolean) op2 == true) || (boolean) op1 == (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Operación Relacional menor igual que (<=) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -330,7 +328,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("false");
+                        return (boolean) op1 == true && (boolean) op2 == false; 
                     default:
                         return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -387,8 +385,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return (op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("false"))
-                                || op1.toString().equalsIgnoreCase(op2.toString());
+                        return ((boolean) op1 == true && (boolean) op2 == false) || (boolean) op1 == (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }

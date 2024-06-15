@@ -65,7 +65,7 @@ public class Match extends Instruction {
                 if (a == null) {
                     continue;
                 }
-                
+
                 var aux = a.getExpression().interpret(tree, table);
                 if (aux instanceof Error) {
                     return aux; //TERMINA LA SECUENCIA DEL MATCH
@@ -75,6 +75,9 @@ public class Match extends Instruction {
                     var res1 = a.interpret(tree, newTable);
                     if (res1 instanceof Error) {
                         return res1; //TERMINA LA SECUENCIA DEL MATCH
+                    }
+                    if (res1 instanceof Break) {
+                        return res1;
                     }
                     return null;
                 }
@@ -86,9 +89,15 @@ public class Match extends Instruction {
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Break) {
+                    return a;
+                }
                 var res1 = a.interpret(tree, newTable);
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL MATCH
+                }
+                if (res1 instanceof Break) {
+                    return res1;
                 }
             }
         }

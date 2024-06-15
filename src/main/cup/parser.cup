@@ -135,8 +135,8 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | DECIMAL:a     {:   RESULT = new Native(new Double(a), new Type(DataType.DECIMAL), aleft, aright);   :}
             | CADENA:a      {:   RESULT = new Native(a, new Type(DataType.CADENA), aleft, aright);   :}
             | CARACTER:a    {:   RESULT = new Native(a, new Type(DataType.CARACTER), aleft, aright);   :}
-            | KW_TRUE:a     {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright);   :}
-            | KW_FALSE:a    {:   RESULT = new Native(a, new Type(DataType.BOOLEANO), aleft, aright);   :}
+            | KW_TRUE:a     {:   RESULT = new Native(true, new Type(DataType.BOOLEANO), aleft, aright);   :}
+            | KW_FALSE:a    {:   RESULT = new Native(false, new Type(DataType.BOOLEANO), aleft, aright);   :}
             | ID:a          {:   RESULT = new VariableAccess(a, aleft, aright);   :}
 ;
 

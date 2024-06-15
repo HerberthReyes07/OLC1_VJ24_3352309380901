@@ -70,7 +70,7 @@ public class DoWhile extends Instruction {
                     break;
                 }
             }
-        } while (Boolean.parseBoolean(this.condition.interpret(tree, table).toString()));
+        } while ((boolean) this.condition.interpret(tree, table));
 
         return null;
     }

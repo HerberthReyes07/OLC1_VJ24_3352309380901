@@ -81,7 +81,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return op1.toString().equalsIgnoreCase("true") || op2.toString().equalsIgnoreCase("true");
+                        return (boolean) op1 || (boolean) op2; 
                     default:
                         return new Error("SEMANTICO", "Operación lógica OR (||) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -98,7 +98,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return op1.toString().equalsIgnoreCase("true") && op2.toString().equalsIgnoreCase("true");
+                        return (boolean) op1 && (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Operación lógica AND (&&) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -115,7 +115,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return !op1.toString().equalsIgnoreCase(op2.toString());
+                        return (boolean) op1 ^ (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Operación lógica XOR (^) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -129,7 +129,7 @@ public class Logical extends Instruction {
         DataType typeUOp = this.uniqueOperand.type.getDataType();
         switch (typeUOp) {
             case BOOLEANO:
-                return op1.toString().equalsIgnoreCase("false");
+                return !((boolean) op1);
             default:
                 return new Error("SEMANTICO", "Operación lógica NOT (!) Inválida: no puede negar el tipo " + typeUOp, this.line, this.column);
         }
