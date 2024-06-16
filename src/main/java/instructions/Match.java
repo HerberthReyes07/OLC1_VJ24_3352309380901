@@ -58,6 +58,7 @@ public class Match extends Instruction {
 
         DataType type1 = this.condition.type.getDataType();
         var newTable = new SymbolTable(table);
+        newTable.setName(table.getName() + "-MATCH");
 
         if (this.cases != null) {
             for (var a : this.cases) {
@@ -85,6 +86,9 @@ public class Match extends Instruction {
         }
 
         if (this.defaultMatch != null) {
+            var newTableDefault = new SymbolTable(newTable);
+            newTableDefault.setName(newTable.getName() + "-DEFAULT");
+            //tree.getTables().add(newTableDefault);
             for (var a : this.defaultMatch) {
                 if (a == null) {
                     continue;
@@ -92,7 +96,7 @@ public class Match extends Instruction {
                 if (a instanceof Break) {
                     return a;
                 }
-                var res1 = a.interpret(tree, newTable);
+                var res1 = a.interpret(tree, newTableDefault);
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL MATCH
                 }

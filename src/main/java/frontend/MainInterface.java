@@ -6,6 +6,7 @@ package frontend;
 
 import backend.FileController;
 import backend.Interpreter;
+import symbol.SymbolTable;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -37,9 +38,11 @@ public class MainInterface extends javax.swing.JFrame {
     private ArrayList<LinkedList<Error>> arrayLexErrors = new ArrayList<>();
     private ArrayList<LinkedList<Error>> arraySyntaxErrors = new ArrayList<>();
     private ArrayList<LinkedList<Error>> arraySemanticErrors = new ArrayList<>();
+    private ArrayList<LinkedList<SymbolTable>> arraySymbolTables = new ArrayList<>();
     private LinkedList<Error> lexErrors;
     private LinkedList<Error> syntaxErrors;
     private LinkedList<Error> semanticErrors;
+    private LinkedList<SymbolTable> symbolTable;
 
     /**
      * Creates new form MainInterface
@@ -263,9 +266,11 @@ public class MainInterface extends javax.swing.JFrame {
             arrayLexErrors.remove(jTabbedPane1.getSelectedIndex());
             arraySyntaxErrors.remove(jTabbedPane1.getSelectedIndex());
             arraySemanticErrors.remove(jTabbedPane1.getSelectedIndex());
+            arraySymbolTables.remove(jTabbedPane1.getSelectedIndex());
             this.lexErrors = new LinkedList<>();
             this.syntaxErrors = new LinkedList<>();
             this.semanticErrors = new LinkedList<>();
+            this.symbolTable = new LinkedList<>();
             jTabbedPane1.removeTabAt(jTabbedPane1.getSelectedIndex());
         } else {
             JOptionPane.showMessageDialog(null, "No hay ningún archivo abierto para ser cerrado", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -295,6 +300,7 @@ public class MainInterface extends javax.swing.JFrame {
             this.lexErrors = arrayLexErrors.get(jTabbedPane1.getSelectedIndex());
             this.syntaxErrors = arraySyntaxErrors.get(jTabbedPane1.getSelectedIndex());
             this.semanticErrors = arraySemanticErrors.get(jTabbedPane1.getSelectedIndex());
+            this.symbolTable = arraySymbolTables.get(jTabbedPane1.getSelectedIndex());
         } else {
             jTextField1.setText("");
             jTextArea2.setText("");
@@ -304,13 +310,9 @@ public class MainInterface extends javax.swing.JFrame {
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         // TODO add your handling code here:
-        
+
         if (!this.lexErrors.isEmpty() || !this.syntaxErrors.isEmpty() || !this.semanticErrors.isEmpty()) {
-            ErrorTable errorTable = new ErrorTable();
-            errorTable.setLexErrors(this.lexErrors);
-            errorTable.setSyntaxErrors(this.syntaxErrors);
-            errorTable.setSemanticErrors(this.semanticErrors);
-            errorTable.fillTable();
+            ErrorTable errorTable = new ErrorTable(this.lexErrors, this.syntaxErrors, this.semanticErrors, jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()));
             errorTable.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "No hay ningún error para mostrar", "Error", JOptionPane.INFORMATION_MESSAGE);
@@ -320,13 +322,18 @@ public class MainInterface extends javax.swing.JFrame {
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // TODO add your handling code here:
-        SymbolTable symbolTable = new SymbolTable();
-        symbolTable.setVisible(true);
+        if (!this.symbolTable.isEmpty()) {
+            SymbolTableInterface symbolTableInterface = new SymbolTableInterface(this.symbolTable, jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()));
+            symbolTableInterface.setVisible(true);
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay ningún simbolo para mostrar", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenu3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MousePressed
         // TODO add your handling code here:
-        
+
 
     }//GEN-LAST:event_jMenu3MousePressed
 
@@ -342,7 +349,8 @@ public class MainInterface extends javax.swing.JFrame {
             this.lexErrors = interpreter.getLexErrors();
             this.syntaxErrors = interpreter.getSyntaxErrors();
             this.semanticErrors = interpreter.getSemanticErrors();
-            
+            this.symbolTable = interpreter.getSymbolTable();
+
             //errores lexicos
             for (var a : this.lexErrors) {
                 output += "---> Error: " + a.getType() + " - " + a.getDescription() + " en línea: " + a.getLine() + " y columna: " + a.getColumn() + "\n";
@@ -358,7 +366,8 @@ public class MainInterface extends javax.swing.JFrame {
 
             outputs.set(jTabbedPane1.getSelectedIndex(), output);
             jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
-            
+
+            arraySymbolTables.set(jTabbedPane1.getSelectedIndex(), this.symbolTable);
             arrayLexErrors.set(jTabbedPane1.getSelectedIndex(), this.lexErrors);
             arraySyntaxErrors.set(jTabbedPane1.getSelectedIndex(), this.syntaxErrors);
             arraySemanticErrors.set(jTabbedPane1.getSelectedIndex(), this.semanticErrors);
@@ -402,7 +411,8 @@ public class MainInterface extends javax.swing.JFrame {
         arrayLexErrors.add(new LinkedList<>());
         arraySyntaxErrors.add(new LinkedList<>());
         arraySemanticErrors.add(new LinkedList<>());
-        
+        arraySymbolTables.add(new LinkedList<>());
+
         JTextArea textArea = new JTextArea();
 
         Document doc = textArea.getDocument();

@@ -62,9 +62,42 @@ public class If extends Instruction {
 
     private Object executeIf(Object condition, Tree tree, SymbolTable table) {
 
-        var newTable = new SymbolTable(table);
+        /*var newTable = new SymbolTable(table);
+        newTable.setName(table.getName() + "IF");
+        for (var a : this.instructionsIf) {
+            if (a == null) {
+                continue;
+            }
+            if (a instanceof If) {
+                break;
+            }
+            if (a instanceof Declaration) {
+                a.interpret(tree, newTable);
+            }
+        }
+        tree.getTables().add(newTable);
+
+        var newTable2 = new SymbolTable(table);
+        newTable2.setName(table.getName() + "-ELSE");
+        if (this.instructionsElse != null) {
+            for (var a : this.instructionsElse) {
+                if (a == null) {
+                    continue;
+                }
+                if (a instanceof If) {
+                    break;
+                }
+                if (a instanceof Declaration) {
+                    a.interpret(tree, newTable2);
+                }
+            }
+            tree.getTables().add(newTable2);
+        }*/
 
         if ((boolean) condition) {
+            var newTable = new SymbolTable(table);
+            newTable.setName(table.getName() + "-IF");
+            tree.getTables().add(newTable);
             for (var a : this.instructionsIf) {
                 if (a == null) {
                     continue;
@@ -80,8 +113,12 @@ public class If extends Instruction {
                     return res1;
                 }
             }
+            //tree.getTables().add(newTable);
         } else {
             if (this.instructionsElse != null) {
+                var newTable2 = new SymbolTable(table);
+                newTable2.setName(table.getName()+"-ELSE");
+                tree.getTables().add(newTable2);
                 for (var a : this.instructionsElse) {
                     if (a == null) {
                         continue;
@@ -89,7 +126,7 @@ public class If extends Instruction {
                     if (a instanceof Break || a instanceof Continue) {
                         return a;
                     }
-                    var res2 = a.interpret(tree, newTable);
+                    var res2 = a.interpret(tree, newTable2);
                     if (res2 instanceof Error) {
                         return res2;
                     }
@@ -97,8 +134,9 @@ public class If extends Instruction {
                         return res2;
                     }
                 }
+                //tree.getTables().add(newTable2);
             } else if (this.elseIf != null) {
-                var res3 = elseIf.interpret(tree, newTable);
+                var res3 = elseIf.interpret(tree, table);
                 if (res3 instanceof Error) {
                     return res3;
                 }

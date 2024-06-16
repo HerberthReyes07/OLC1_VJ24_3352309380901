@@ -74,9 +74,9 @@ public class Declaration extends Instruction {
 
         Symbol symbol;
         if (this.mutabilityType == MutabilityType.VAR) {
-            symbol = new Symbol(this.type, this.id, interpretedValue, true);
+            symbol = new Symbol(this.type, this.id, interpretedValue, true, this.line, this.column);
         } else {
-            symbol = new Symbol(this.type, this.id, interpretedValue, false);
+            symbol = new Symbol(this.type, this.id, interpretedValue, false,this.line, this.column);
         }
 
         boolean creation = table.setVariable(symbol);

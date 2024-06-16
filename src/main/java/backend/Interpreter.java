@@ -25,30 +25,12 @@ public class Interpreter {
     private LinkedList<Error> lexErrors;
     private LinkedList<Error> syntaxErrors;
     private LinkedList<Error> semanticErrors;
+    /*private LinkedList<SymbolTable> tables;
+    private SymbolTable globalTable;*/
+    private LinkedList<SymbolTable> symbolTable;
 
     public void interpret() {
         try {
-            //println(\"\\\"CADENA CON \\n COMILLLAS\\t \\\'C:micarpeta\\\' \\\" \");
-            /*String texto = "println(\'\\n\');\n"
-                    + "println(\'\\\\');\n"
-                    + "println(\'\\\"\');\n"
-                    + "println(\'\\\'\');\n"
-                    + "println(\'\\t\');";
-            String texto = ""
-                    + "match 1 {\n"
-                    + "    2**2 => { \n"
-                    + "        println(\"ES 4\");\n"
-                    + "    }\n"
-                    + "    4-1 => { \n"
-                    + "        println(\"ES 3\");\n"
-                    + "    }\n"
-                    + "    2*1 => { \n"
-                    + "        println(\"ES 2\");\n"
-                    + "    }\n"
-                    + "    _ => { \n"
-                    + "        println(\"NO ES 4, 3 O 2\");\n"
-                    + "    }\n"
-                    + "}";*/
             scanner s = new scanner(new BufferedReader(new StringReader(this.code)));
             parser p = new parser(s);
             var resultado = p.parse();
@@ -70,6 +52,10 @@ public class Interpreter {
                     semanticErrors.add((Error) res);
                 }
             }
+            
+            this.symbolTable = new LinkedList<>();
+            symbolTable.add(table);
+            symbolTable.addAll(ast.getTables());
             
             this.semanticErrors = semanticErrors;
             this.console = ast.getConsole();
@@ -103,5 +89,9 @@ public class Interpreter {
     public LinkedList<Error> getSemanticErrors() {
         return semanticErrors;
     }
-    
+
+    public LinkedList<SymbolTable> getSymbolTable() {
+        return symbolTable;
+    }
+
 }

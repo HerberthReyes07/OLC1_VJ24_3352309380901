@@ -47,6 +47,8 @@ public class CaseMatch extends Instruction {
     private Object executeCase(Object caseM, Tree tree, SymbolTable table) {
 
         var newTable = new SymbolTable(table);
+        newTable.setName(table.getName() + "-CASE");
+        tree.getTables().add(newTable);
         for (var a : this.instructions) {
             if (a == null) {
                 continue;

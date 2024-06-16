@@ -47,7 +47,7 @@ public class DoWhile extends Instruction {
 
         do {
             var newTable = new SymbolTable(table);
-            newTable.setName("SENTENCIA DO-WHILE");
+            newTable.setName(table.getName() + "-DO_WHILE");
 
             for (var a : this.instructions) {
                 if (a == null) {

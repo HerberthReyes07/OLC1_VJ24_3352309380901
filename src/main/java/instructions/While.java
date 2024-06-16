@@ -46,8 +46,7 @@ public class While extends Instruction {
 
         while ((boolean) this.condition.interpret(tree, table)) {
             var newTable = new SymbolTable(table);
-            newTable.setName("SENTENCIA WHILE");
-
+            newTable.setName(table.getName() + "-WHILE");
             for (var a : this.instructions) {
                 if (a == null) {
                     continue;

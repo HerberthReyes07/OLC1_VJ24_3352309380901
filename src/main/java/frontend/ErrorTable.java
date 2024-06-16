@@ -20,25 +20,20 @@ public class ErrorTable extends javax.swing.JFrame {
      * Creates new form ErrorTable
      */
     private DefaultTableModel model;
-    private LinkedList<Error> lexErrors;
-    private LinkedList<Error> syntaxErrors;
-    private LinkedList<Error> semanticErrors;
     private ArrayList<String> descriptions = new ArrayList<>();
 
-    public ErrorTable() {
+    public ErrorTable(LinkedList<Error> lexErrors, LinkedList<Error> syntaxErrors, LinkedList<Error> semanticErrors, String fileName) {
         initComponents();
+        jLabel1.setText("Tabla de Errores: " + fileName);
         model = (DefaultTableModel) jTable1.getModel();
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
         jTable1.getColumnModel().getColumn(2).setPreferredWidth(250);
         jTable1.getColumnModel().getColumn(3).setPreferredWidth(15);
         jTable1.getColumnModel().getColumn(4).setPreferredWidth(15);
-    }
-    
-    public void fillTable(){
-        //errores lexicos
+        
         int num = 1;
-        for (var a : this.lexErrors) {
+        for (var a : lexErrors) {
             model.addRow(new Object[]{
                 num,
                 a.getType(),
@@ -50,7 +45,7 @@ public class ErrorTable extends javax.swing.JFrame {
             num++;
         }
         //errores sintacticos
-        for (var a : this.syntaxErrors) {
+        for (var a : syntaxErrors) {
             model.addRow(new Object[]{
                 num,
                 a.getType(),
@@ -62,7 +57,7 @@ public class ErrorTable extends javax.swing.JFrame {
             num++;
         }
         //errores semanticos
-        for (var a : this.semanticErrors) {
+        for (var a : semanticErrors) {
             model.addRow(new Object[]{
                 num,
                 a.getType(),
@@ -73,18 +68,6 @@ public class ErrorTable extends javax.swing.JFrame {
             descriptions.add(a.getDescription());
             num++;
         }
-    }
-
-    public void setLexErrors(LinkedList<Error> lexErrors) {
-        this.lexErrors = lexErrors;
-    }
-
-    public void setSyntaxErrors(LinkedList<Error> syntaxErrors) {
-        this.syntaxErrors = syntaxErrors;
-    }
-
-    public void setSemanticErrors(LinkedList<Error> semanticErrors) {
-        this.semanticErrors = semanticErrors;
     }
     
     /**
@@ -135,19 +118,19 @@ public class ErrorTable extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(357, 357, 357)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(58, 58, 58)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 736, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(222, 222, 222)
+                        .addComponent(jLabel1)))
                 .addContainerGap(71, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(48, 48, 48)
+                .addGap(64, 64, 64)
                 .addComponent(jLabel1)
-                .addGap(72, 72, 72)
+                .addGap(56, 56, 56)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(79, Short.MAX_VALUE))
         );

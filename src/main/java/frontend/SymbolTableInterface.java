@@ -4,22 +4,27 @@
  */
 package frontend;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import javax.swing.table.DefaultTableModel;
+import symbol.Symbol;
+import symbol.SymbolTable;
 
 /**
  *
  * @author herberthreyes
  */
-public class SymbolTable extends javax.swing.JFrame {
-    
-    private DefaultTableModel modelo;
+public class SymbolTableInterface extends javax.swing.JFrame {
+
+    private DefaultTableModel model;
 
     /**
      * Creates new form SymbolTable
      */
-    public SymbolTable() {
+    public SymbolTableInterface(LinkedList<SymbolTable> symbolTable, String fileName) {
         initComponents();
-        modelo = (DefaultTableModel) jTable1.getModel();
+        jLabel1.setText("Tabla de Símbolos: " + fileName);
+        model = (DefaultTableModel) jTable1.getModel();
         jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
         jTable1.getColumnModel().getColumn(1).setPreferredWidth(70);
         jTable1.getColumnModel().getColumn(2).setPreferredWidth(50);
@@ -28,6 +33,25 @@ public class SymbolTable extends javax.swing.JFrame {
         jTable1.getColumnModel().getColumn(5).setPreferredWidth(50);
         jTable1.getColumnModel().getColumn(6).setPreferredWidth(15);
         jTable1.getColumnModel().getColumn(7).setPreferredWidth(15);
+       
+        int num = 1;
+        for (int i = 0; i < symbolTable.size(); i++) {
+            Collection<Object> values = symbolTable.get(i).getCurrentTable().values();
+
+            for (Object value : values) {
+                model.addRow(new Object[]{
+                    num,
+                    ((Symbol) value).getId(),
+                    "Variable",
+                    ((Symbol) value).getType().getDataType(),
+                    symbolTable.get(i).getName(),
+                    ((Symbol) value).getValue(),
+                    ((Symbol) value).getLine(),
+                    ((Symbol) value).getColumn(),
+                });
+                num++;
+            }
+        }
     }
 
     /**
@@ -75,16 +99,16 @@ public class SymbolTable extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 750, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(56, 56, 56))
             .addGroup(layout.createSequentialGroup()
-                .addGap(331, 331, 331)
+                .addGap(228, 228, 228)
                 .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(66, 66, 66)
+                .addContainerGap(71, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                .addGap(60, 60, 60)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(68, 68, 68))
         );

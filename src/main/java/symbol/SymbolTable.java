@@ -74,4 +74,12 @@ public class SymbolTable {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        if (previousTable == null) {
+            return "SymbolTable{" + "previousTable=" + previousTable + ", currentTable=" + currentTable + ", name=" + name + '}';
+        }
+        return "SymbolTable{" + "previousTable=" + previousTable.getName() + ", currentTable=" + currentTable + ", name=" + name + '}';
+    }
+
 }

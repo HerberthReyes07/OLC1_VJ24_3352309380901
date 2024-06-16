@@ -35,6 +35,7 @@ public class For extends Instruction{
     public Object interpret(Tree tree, SymbolTable table) {
         
         var newTable = new SymbolTable(table);
+        newTable.setName(table.getName() + "-FOR");
         
         var asig = assignation.interpret(tree, newTable);
         if (asig instanceof Error) {
@@ -51,6 +52,7 @@ public class For extends Instruction{
         }
         
         return executeFor(tree, newTable);
+        //return executeFor(tree, table);
     }
     
     private Object executeFor(Tree tree, SymbolTable newTable){
@@ -58,7 +60,7 @@ public class For extends Instruction{
         while ((boolean) this.condition.interpret(tree, newTable)) {
             //nuevo entorno
             var newTable2 = new SymbolTable(newTable);
-            newTable2.setName("SENTENCIA FOR ");
+            newTable2.setName(newTable.getName());
             //ejecutar instrucciones
             for (var a : this.instructions) {
                 if (a == null) {
