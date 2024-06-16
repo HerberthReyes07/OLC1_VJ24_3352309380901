@@ -13,6 +13,7 @@ public interface sym {
   public static final int POT = 8;
   public static final int MULT = 36;
   public static final int KW_INT = 18;
+  public static final int EQUALS = 9;
   public static final int ENTERO = 4;
   public static final int KW_FOR = 27;
   public static final int XOR = 44;
@@ -50,7 +51,6 @@ public interface sym {
   public static final int PAR_IZQ = 46;
   public static final int KW_TRUE = 32;
   public static final int KW_IF = 23;
-  public static final int IGLCN = 9;
   public static final int GUION_BAJO = 54;
   public static final int LLAVE_DER = 49;
   public static final int KW_BREAK = 29;
@@ -74,7 +74,7 @@ public interface sym {
   "ID",
   "UMENOS",
   "POT",
-  "IGLCN",
+  "EQUALS",
   "DIF",
   "MENOR_IGUAL",
   "MAYOR_IGUAL",

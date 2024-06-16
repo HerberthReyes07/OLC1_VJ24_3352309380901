@@ -57,7 +57,7 @@ CARACTER = [\'](([\\]([n]|[\\]|[\"]|[t]|[\'])|[^\\\"\']{0,1}))[\']
 CADENA = [\"](([\\]([n]|[\\]|[\"]|[t]|[\'])|[^\\\"\']))*[\"]
 ID = [a-zA-Z][a-zA-Z0-9_]*
 COMENTARIO_SIM = [/][/].*
-COMENTARIO_MULT = [/][*][\s\S]*?[*][/]
+COMENTARIO_MULT = [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]
 BLANCOS = [\ \r\t\n\f]+
 
 //palabras reservadas
@@ -103,27 +103,6 @@ KW_FALSE = "false"
 <YYINITIAL> {DECIMAL}   {return new Symbol(sym.DECIMAL, yyline, yycolumn, yytext());}
 <YYINITIAL> {ENTERO}    {return new Symbol(sym.ENTERO, yyline, yycolumn, yytext());}
 
-<YYINITIAL> {CARACTER} {
-                String caracter = yytext();
-                caracter = caracter.substring(1, caracter.length()-1);
-                caracter = caracter.replace("\\n","\n");
-                caracter = caracter.replace("\\\\","\\");
-                caracter = caracter.replace("\\\"","\"");
-                caracter = caracter.replace("\\t","\t");
-                caracter = caracter.replace("\\\'","\'");
-                return new Symbol(sym.CARACTER, yyline, yycolumn, caracter);
-            }
-
-<YYINITIAL> {CADENA} {
-                String cadena = yytext();
-                cadena = cadena.substring(1, cadena.length()-1);
-                cadena = cadena.replace("\\n","\n");
-                cadena = cadena.replace("\\\\","\\");
-                cadena = cadena.replace("\\\"","\"");
-                cadena = cadena.replace("\\t","\t");
-                cadena = cadena.replace("\\\'","\'");
-                return new Symbol(sym.CADENA, yyline, yycolumn, cadena);
-            }
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID, yyline, yycolumn,yytext());}
 <YYINITIAL> {PAR_IZQ}       {return new Symbol(sym.PAR_IZQ, yyline, yycolumn, yytext());}
@@ -151,6 +130,28 @@ KW_FALSE = "false"
 <YYINITIAL> {COMENTARIO_SIM}   {}
 <YYINITIAL> {COMENTARIO_MULT}   {}
 <YYINITIAL> {BLANCOS}   {}
+
+<YYINITIAL> {CARACTER} {
+                String caracter = yytext();
+                caracter = caracter.substring(1, caracter.length()-1);
+                caracter = caracter.replace("\\n","\n");
+                caracter = caracter.replace("\\\\","\\");
+                caracter = caracter.replace("\\\"","\"");
+                caracter = caracter.replace("\\t","\t");
+                caracter = caracter.replace("\\\'","\'");
+                return new Symbol(sym.CARACTER, yyline, yycolumn, caracter);
+            }
+
+<YYINITIAL> {CADENA} {
+                String cadena = yytext();
+                cadena = cadena.substring(1, cadena.length()-1);
+                cadena = cadena.replace("\\n","\n");
+                cadena = cadena.replace("\\\\","\\");
+                cadena = cadena.replace("\\\"","\"");
+                cadena = cadena.replace("\\t","\t");
+                cadena = cadena.replace("\\\'","\'");
+                return new Symbol(sym.CADENA, yyline, yycolumn, cadena);
+            }
 
 <YYINITIAL> . {
                 scannerErrors.add(new exceptions.Error("LEXICO","El caracter "+

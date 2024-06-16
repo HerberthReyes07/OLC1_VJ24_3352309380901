@@ -67,7 +67,7 @@ public class Relational extends Instruction {
             case ENTERO:
                 switch (type2) {
                     case ENTERO:
-                        return (int) op1 == (int) op2;
+                        return ((int) op1 == (int) op2);
                     case DECIMAL:
                         return (int) op1 == (double) op2;
                     case CARACTER:
@@ -120,6 +120,8 @@ public class Relational extends Instruction {
 
         DataType type1 = this.operand1.type.getDataType();
         DataType type2 = this.operand2.type.getDataType();
+        System.out.println("OP1: " + op1);
+        System.out.println("OP2: " + op2);
         switch (type1) {
             case ENTERO:
                 switch (type2) {

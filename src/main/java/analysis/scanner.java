@@ -107,7 +107,7 @@ public class scanner implements java_cup.runtime.Scanner {
     "\0\u0717\0\u074e\0\u0785\0\u01b8\0\u07bc\0\u07f3\0\u082a\0\u0861"+
     "\0\u0898\0\u08cf\0\u0906\0\67\0\u093d\0\u05cd\0\u0974\0\u09ab"+
     "\0\u09e2\0\u0a19\0\u0a50\0\u0a87\0\u0abe\0\u01b8\0\u01b8\0\u0af5"+
-    "\0\u0b2c\0\u0b63\0\u0b9a\0\u01b8\0\u0bd1\0\u055f\0\u01b8\0\u0c08"+
+    "\0\u0b2c\0\u0b63\0\u0b9a\0\u01b8\0\u0bd1\0\67\0\u01b8\0\u0c08"+
     "\0\u01b8\0\u0c3f\0\u0c76\0\u0cad\0\u01b8\0\u0ce4\0\u0d1b\0\u0d52"+
     "\0\u0d89\0\u01b8\0\u0dc0\0\u01b8\0\u01b8\0\u0df7\0\u0e2e\0\u01b8"+
     "\0\u01b8\0\u0e65\0\u0e9c\0\u01b8\0\u0ed3\0\u01b8\0\u0f0a\0\u01b8"+
@@ -258,7 +258,7 @@ public class scanner implements java_cup.runtime.Scanner {
     "\1\0\1\11\1\1\1\11\1\1\1\11\2\1\6\11"+
     "\2\1\5\11\15\1\5\11\1\1\1\11\1\0\1\11"+
     "\1\0\1\11\1\0\1\11\2\0\1\1\1\0\20\1"+
-    "\1\11\1\0\56\1";
+    "\1\11\1\0\20\1\1\11\35\1";
 
   private static int [] zzUnpackAttribute() {
     int [] result = new int[115];
