@@ -93,7 +93,7 @@ public class MainInterface extends javax.swing.JFrame {
 
         jTextArea2.setEditable(false);
         jTextArea2.setColumns(20);
-        jTextArea2.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+        jTextArea2.setFont(new java.awt.Font("Ubuntu Mono", 1, 18)); // NOI18N
         jTextArea2.setRows(5);
         jScrollPane2.setViewportView(jTextArea2);
 

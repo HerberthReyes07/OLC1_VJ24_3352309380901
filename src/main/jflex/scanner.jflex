@@ -35,6 +35,7 @@ LLAVE_IZQ = "{"
 LLAVE_DER = "}"
 CORCHETE_IZQ = "["
 CORCHETE_DER = "]"
+PUNTO = "."
 PUNTO_COMA = ";"
 DOS_PUNTOS = ":"
 GUION_BAJO = "_"
@@ -79,6 +80,13 @@ KW_CONTINUE = "continue"
 KW_PRINTLN = "println"
 KW_TRUE = "true"
 KW_FALSE = "false"
+KW_ROUND = "round"
+KW_LENGTH = "length"
+KW_LIST = "list"
+KW_NEW = "new"
+KW_APPEND = "append"
+KW_REMOVE = "remove"
+KW_FIND = "find"
 
 %%
 <YYINITIAL> {KW_CONST}  {return new Symbol(sym.KW_CONST, yyline, yycolumn, yytext());}
@@ -99,10 +107,16 @@ KW_FALSE = "false"
 <YYINITIAL> {KW_PRINTLN}  {return new Symbol(sym.KW_PRINTLN, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_TRUE}  {return new Symbol(sym.KW_TRUE, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_FALSE}  {return new Symbol(sym.KW_FALSE, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_ROUND}  {return new Symbol(sym.KW_ROUND, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_LENGTH}  {return new Symbol(sym.KW_LENGTH, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_LIST}  {return new Symbol(sym.KW_LIST, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_NEW}  {return new Symbol(sym.KW_NEW, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_APPEND}  {return new Symbol(sym.KW_APPEND, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_REMOVE}  {return new Symbol(sym.KW_REMOVE, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_FIND}  {return new Symbol(sym.KW_FIND, yyline, yycolumn, yytext());}
 
 <YYINITIAL> {DECIMAL}   {return new Symbol(sym.DECIMAL, yyline, yycolumn, yytext());}
 <YYINITIAL> {ENTERO}    {return new Symbol(sym.ENTERO, yyline, yycolumn, yytext());}
-
 
 <YYINITIAL> {ID} {return new Symbol(sym.ID, yyline, yycolumn,yytext());}
 <YYINITIAL> {PAR_IZQ}       {return new Symbol(sym.PAR_IZQ, yyline, yycolumn, yytext());}
@@ -111,6 +125,7 @@ KW_FALSE = "false"
 <YYINITIAL> {LLAVE_DER}       {return new Symbol(sym.LLAVE_DER, yyline, yycolumn, yytext());}
 <YYINITIAL> {CORCHETE_IZQ}       {return new Symbol(sym.CORCHETE_IZQ, yyline, yycolumn, yytext());}
 <YYINITIAL> {CORCHETE_DER}       {return new Symbol(sym.CORCHETE_DER, yyline, yycolumn, yytext());}
+<YYINITIAL> {PUNTO}       {return new Symbol(sym.PUNTO, yyline, yycolumn, yytext());}
 <YYINITIAL> {PUNTO_COMA}       {return new Symbol(sym.PUNTO_COMA, yyline, yycolumn, yytext());}
 <YYINITIAL> {DOS_PUNTOS}       {return new Symbol(sym.DOS_PUNTOS, yyline, yycolumn, yytext());}
 <YYINITIAL> {GUION_BAJO}       {return new Symbol(sym.GUION_BAJO, yyline, yycolumn, yytext());}

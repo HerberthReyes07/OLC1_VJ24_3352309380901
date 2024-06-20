@@ -21,6 +21,10 @@ import instructions.For;
 import instructions.DoWhile;
 import instructions.Break;
 import instructions.Continue;
+import instructions.VectorDeclaration;
+import instructions.VectorAssignment;
+import instructions.DynamicListDeclaration;
+import instructions.Append;
 
 //expresiones
 import expressions.Native;
@@ -29,6 +33,11 @@ import expressions.Relational;
 import expressions.Logical;
 import expressions.VariableAccess;
 import expressions.TypeCasting;
+import expressions.Round;
+import expressions.VectorAccess;
+import expressions.Length;
+import expressions.Remove;
+import expressions.Find;
 
 // parser
 parser code
@@ -60,15 +69,18 @@ action code
 
 //terminales
 terminal String CADENA, CARACTER, ENTERO, DECIMAL, ID;
-terminal UMENOS, POT, EQUALS, DIF, MENOR_IGUAL, MAYOR_IGUAL, CASTEO_PREC, INCREMENTO, DECREMENTO;
+terminal UMENOS, POT, EQUALS, DIF, MENOR_IGUAL, MAYOR_IGUAL, CASTEO_PREC;
 terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING; 
 terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
+terminal KW_ROUND, KW_LENGTH, KW_FIND;
+terminal KW_LIST, KW_NEW, KW_APPEND, KW_REMOVE;
 terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
-terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO_COMA, DOS_PUNTOS, GUION_BAJO, COMA;
+terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO, PUNTO_COMA, DOS_PUNTOS, GUION_BAJO, COMA;
 
 //no terminales
-nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES, DEFAULT_MATCH;
+nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES, DEFAULT_MATCH, LISTA_VALORES_V1D;
 nonterminal LinkedList<CaseMatch> CASOS_MATCH;
+nonterminal LinkedList<LinkedList<Instruction>> LISTA_VALORES_V2D;
 nonterminal CaseMatch CASO_MATCH;
 nonterminal Type TIPO;
 nonterminal MutabilityType MUTABILIDAD;
@@ -76,6 +88,9 @@ nonterminal Instruction INSTRUCCION;
 nonterminal Instruction EXPRESION;
 nonterminal Instruction PRINTLN, DECLARACION, ASIGNACION, SENTENCIA_IF, SENTENCIA_MATCH, CASTEO, INCREMENTO_DECREMENTO;
 nonterminal Instruction SENTENCIA_WHILE, SENTENCIA_DO_WHILE, SENTENCIA_FOR, ACTUALIZA_FOR, SENTENCIA_BREAK, SENTENCIA_CONTINUE;
+nonterminal Instruction DECLARACION_VECTORES_1D, ASIGNACION_VECTORES_1D, DECLARACION_VECTORES_2D, ASIGNACION_VECTORES_2D;
+nonterminal Instruction DECLARACION_LISTAS_DINAMICAS, AGREGAR_VALOR_LISTA, QUITAR_VALOR_LISTA;
+nonterminal Instruction ROUND, LENGTH, FIND;
 
 //precedencia
 precedence left OR;
@@ -86,7 +101,7 @@ precedence left EQUALS, DIF, MENOR_QUE, MENOR_IGUAL, MAYOR_QUE, MAYOR_IGUAL;
 precedence left MAS, MENOS;
 precedence left MULT, DIV, MOD;
 precedence nonassoc POT;
-precedence right UMENOS, CASTEO_PREC, INCREMENTO, DECREMENTO;
+precedence right UMENOS, CASTEO_PREC;
 
 start with INICIO;
 
@@ -99,7 +114,13 @@ INSTRUCCIONES ::= INSTRUCCIONES:a INSTRUCCION:b     {: RESULT = a; RESULT.add(b)
 
 INSTRUCCION ::= PRINTLN:a PUNTO_COMA        {:   RESULT = a;   :}
               | DECLARACION:a PUNTO_COMA    {:   RESULT = a;   :}
+              | DECLARACION_VECTORES_1D:a PUNTO_COMA  {:   RESULT = a;   :}
+              | DECLARACION_VECTORES_2D:a PUNTO_COMA  {:   RESULT = a;   :}
+              | DECLARACION_LISTAS_DINAMICAS:a PUNTO_COMA   {:   RESULT = a;   :}
               | ASIGNACION:a PUNTO_COMA     {:   RESULT = a;   :}
+              | ASIGNACION_VECTORES_1D:a PUNTO_COMA   {:   RESULT = a;   :}
+              | ASIGNACION_VECTORES_2D:a PUNTO_COMA   {:   RESULT = a;   :}
+              | AGREGAR_VALOR_LISTA:a PUNTO_COMA  {:   RESULT = a;   :}
               | INCREMENTO_DECREMENTO:a PUNTO_COMA    {:   RESULT = a;   :}
               | SENTENCIA_IF:a              {:   RESULT = a;   :}
               | SENTENCIA_MATCH:a           {:   RESULT = a;   :}
@@ -138,13 +159,19 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | KW_TRUE:a     {:   RESULT = new Native(true, new Type(DataType.BOOLEANO), aleft, aright);   :}
             | KW_FALSE:a    {:   RESULT = new Native(false, new Type(DataType.BOOLEANO), aleft, aright);   :}
             | ID:a          {:   RESULT = new VariableAccess(a, aleft, aright);   :}
+            | ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER {:   RESULT = new VectorAccess(a, b, aleft, aright);   :}
+            | ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER CORCHETE_IZQ EXPRESION:c CORCHETE_DER {:   RESULT = new VectorAccess(a, b, c, aleft, aright);   :}
+            | QUITAR_VALOR_LISTA:a    {:  RESULT = a;   :}
+            | ROUND:a       {:  RESULT = a;   :}
+            | LENGTH:a      {:  RESULT = a;   :}
+            | FIND:a        {:  RESULT = a;   :}
 ;
 
-TIPO ::= KW_INT         {:   RESULT = new Type(DataType.ENTERO);   :}
-       | KW_DOUBLE      {:   RESULT = new Type(DataType.DECIMAL);   :}
+TIPO ::= KW_INT         {:   RESULT = new Type(DataType.ENTERO);     :}
+       | KW_DOUBLE      {:   RESULT = new Type(DataType.DECIMAL);    :}
        | KW_BOOL        {:   RESULT = new Type(DataType.BOOLEANO);   :}
        | KW_CHAR        {:   RESULT = new Type(DataType.CARACTER);   :}
-       | KW_STRING      {:   RESULT = new Type(DataType.CADENA);   :}
+       | KW_STRING      {:   RESULT = new Type(DataType.CADENA);     :}
 ;
 
 MUTABILIDAD ::= KW_CONST         {:   RESULT = MutabilityType.CONST;   :}
@@ -155,7 +182,33 @@ DECLARACION ::= MUTABILIDAD:a ID:b DOS_PUNTOS TIPO:c    {:   RESULT = new Declar
               | MUTABILIDAD:a ID:b DOS_PUNTOS TIPO:c IGUAL EXPRESION:d    {:   RESULT = new Declaration(a, b, d, c, aleft, aright);   :}
 ;
 
+DECLARACION_VECTORES_1D ::= MUTABILIDAD:a ID:b DOS_PUNTOS TIPO:c CORCHETE_IZQ CORCHETE_DER IGUAL CORCHETE_IZQ LISTA_VALORES_V1D:d CORCHETE_DER
+{:   RESULT = new VectorDeclaration(a, b, c, d, aleft, aright );   :}
+;
+
+DECLARACION_VECTORES_2D ::= MUTABILIDAD:a ID:b DOS_PUNTOS TIPO:c CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER IGUAL CORCHETE_IZQ LISTA_VALORES_V2D:d CORCHETE_DER
+{:   RESULT = new VectorDeclaration(a, b, c, d, true, aleft, aright );   :}
+;
+
+DECLARACION_LISTAS_DINAMICAS ::= KW_LIST MENOR_QUE TIPO:a MAYOR_QUE ID:b IGUAL KW_NEW KW_LIST PAR_IZQ PAR_DER
+{:   RESULT = new DynamicListDeclaration(b, a, aleft, aright );   :}
+; 
+
+LISTA_VALORES_V1D ::= LISTA_VALORES_V1D:a COMA EXPRESION:b  {:   RESULT = a; RESULT.add(b); :}
+                   | EXPRESION:a                            {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
+;
+
+LISTA_VALORES_V2D ::= LISTA_VALORES_V2D:a COMA CORCHETE_IZQ LISTA_VALORES_V1D:b CORCHETE_DER    {:   RESULT = a; RESULT.add(b); :}
+                    | CORCHETE_IZQ LISTA_VALORES_V1D:a CORCHETE_DER                             {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
+;
+
 ASIGNACION ::= ID:a IGUAL EXPRESION:b    {:   RESULT = new VariableAssignment(a, b, aleft, aright);   :}
+;
+
+ASIGNACION_VECTORES_1D ::= ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER IGUAL EXPRESION:c    {:   RESULT = new VectorAssignment(a, b, c, aleft, aright);   :}
+;
+
+ASIGNACION_VECTORES_2D ::= ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER CORCHETE_IZQ EXPRESION:c CORCHETE_DER IGUAL EXPRESION:d    {:   RESULT = new VectorAssignment(a, b, c, d, aleft, aright);   :}
 ;
 
 CASTEO ::= PAR_IZQ TIPO:a PAR_DER EXPRESION:b         {:   RESULT = new TypeCasting(a, b, aleft, aright);   :}%prec CASTEO_PREC
@@ -165,7 +218,22 @@ INCREMENTO_DECREMENTO ::= ID:a MAS MAS         {:   RESULT = new VariableAssignm
                         | ID:a MENOS MENOS     {:   RESULT = new VariableAssignment(a, "Decremento", aleft, aright);   :}
 ;
 
-PRINTLN ::= KW_PRINTLN PAR_IZQ EXPRESION:a PAR_DER    {:   RESULT = new Print(a, aleft, aright); :} 
+AGREGAR_VALOR_LISTA ::= ID:a PUNTO KW_APPEND PAR_IZQ EXPRESION:b PAR_DER  {:   RESULT = new Append(a, b, aleft, aright);   :}
+;
+
+QUITAR_VALOR_LISTA ::= ID:a PUNTO KW_REMOVE PAR_IZQ EXPRESION:b PAR_DER  {:   RESULT = new Remove(a, b, aleft, aright);   :}
+;
+
+PRINTLN ::= KW_PRINTLN PAR_IZQ EXPRESION:a PAR_DER    {:   RESULT = new Print(a, aleft, aright);    :} 
+;
+
+ROUND ::= KW_ROUND PAR_IZQ EXPRESION:a PAR_DER        {:   RESULT = new Round(a, aleft, aright);    :}
+;
+
+LENGTH ::= KW_LENGTH PAR_IZQ EXPRESION:a PAR_DER      {:   RESULT = new Length(a, aleft, aright);    :}
+;
+
+FIND ::= ID:a PUNTO KW_FIND PAR_IZQ EXPRESION:b PAR_DER          {:   RESULT = new Find(a, b, aleft, aright);    :}
 ;
 
 SENTENCIA_IF ::= KW_IF PAR_IZQ EXPRESION:a PAR_DER LLAVE_IZQ INSTRUCCIONES:b LLAVE_DER  {:   RESULT = new If(a, b, aleft, aright);   :}
