@@ -35,4 +35,8 @@ public class VariableAccess extends Instruction {
         return value.getValue();
     }
 
+    public String getId() {
+        return id;
+    }
+
 }

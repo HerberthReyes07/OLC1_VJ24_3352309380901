@@ -18,6 +18,7 @@ public class Tree {
     private SymbolTable globalTable;
     private LinkedList<Error> errors;
     private LinkedList<SymbolTable> tables;
+    private LinkedList<Struct> structs;
 
     public Tree(LinkedList<Instruction> instructions) {
         this.instructions = instructions;
@@ -25,6 +26,7 @@ public class Tree {
         this.globalTable = new SymbolTable();
         this.errors = new LinkedList<>();
         this.tables = new LinkedList<>();
+        this.structs = new LinkedList<>();
     }
     
     public void Print(String value) {
@@ -71,6 +73,25 @@ public class Tree {
     public void setTables(LinkedList<SymbolTable> tables) {
         this.tables = tables;
     }
+
+    public LinkedList<Struct> getStructs() {
+        return structs;
+    }
+
+    public void setStructs(LinkedList<Struct> structs) {
+        this.structs = structs;
+    }
+
+    public void addStruct(Struct struct){
+        this.structs.add(struct);
+    }
     
-    
+    public Struct getStruct (String id){
+        for (var a : this.structs) {
+            if (a.getId().equalsIgnoreCase(id)) {
+                return a;
+            }
+        }
+        return null;
+    }
 }

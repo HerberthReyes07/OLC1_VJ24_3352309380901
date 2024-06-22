@@ -13,6 +13,7 @@ public class Symbol {
     private Type type;
     private String id;
     private Object value;
+    private Struct struct;
     private boolean mutable;
     private int line;
     private int column;
@@ -32,6 +33,16 @@ public class Symbol {
         this.column = column;
     }
 
+    public Symbol(Type type, String id, Object value, Struct struct, boolean mutable, int line, int column) {
+        this.type = type;
+        this.id = id;
+        this.value = value;
+        this.struct = struct;
+        this.mutable = mutable;
+        this.line = line;
+        this.column = column;
+    }
+    
     public Type getType() {
         return type;
     }
@@ -80,6 +91,14 @@ public class Symbol {
         this.column = column;
     }
 
+    public Struct getStruct() {
+        return struct;
+    }
+
+    public void setStruct(Struct struct) {
+        this.struct = struct;
+    }
+    
     @Override
     public String toString() {
         return "Symbol{" + "type=" + type + ", id=" + id + ", value=" + value + ", mutable=" + mutable + ", line=" + line + ", column=" + column + '}';

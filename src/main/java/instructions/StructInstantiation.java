@@ -1,0 +1,99 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package instructions;
+
+import abstracto.Instruction;
+import java.util.LinkedList;
+import symbol.DataType;
+import symbol.MutabilityType;
+import symbol.SymbolTable;
+import symbol.Tree;
+import symbol.Type;
+import exceptions.Error;
+import java.util.HashMap;
+import symbol.Struct;
+import symbol.Symbol;
+
+/**
+ *
+ * @author herberthreyes
+ */
+public class StructInstantiation extends Instruction {
+
+    private MutabilityType mutabilityType;
+    private String id;
+    private String structName;
+    private LinkedList<StructValue> values;
+
+    public StructInstantiation(MutabilityType mutabilityType, String id, String structName, LinkedList<StructValue> values, int line, int column) {
+        super(new Type(DataType.STRUCT), line, column);
+        this.mutabilityType = mutabilityType;
+        this.id = id;
+        this.structName = structName;
+        this.values = values;
+    }
+
+    @Override
+    public Object interpret(Tree tree, SymbolTable table) {
+
+        var struct = tree.getStruct(this.structName);
+
+        if (struct == null) {
+            return new Error("SEMANTICO", "Instanciación de Struct Inválida: No puede instanciar un Struct que no existente", this.line, this.column);
+        }
+
+        //LinkedList<Object> val1 = new LinkedList<>();
+        HashMap<String, Object> val = new HashMap<>();
+        
+        for (var a : this.values) {
+            if (a == null) {
+                continue;
+            }
+            var res1 = a.interpret(tree, table);
+            if (res1 instanceof Error) {
+                return res1; //RETORNA EL ERROR
+            }
+            
+            var aux = struct.getValues().get(a.getField().toLowerCase());
+            if (aux == null) {
+                return new Error("SEMANTICO", "Instanciación de Struct Inválida: El campo: " + a.getField().toLowerCase() + " inexistente en Struct: " + this.structName, this.line, this.column);
+            }
+            
+            DataType aux2 = struct.getValuesTypes().get(a.getField().toLowerCase());
+            if (a.type.getDataType() != aux2) {
+                return new Error("SEMANTICO", "Instanciación de Struct Inválida: El campo: " + a.getField().toLowerCase() +" es del tipo " + aux2 + ", no puede asignarle un valor del tipo " + a.type.getDataType(), this.line, this.column);
+            }
+            
+            /*if (a.type.getDataType() == DataType.STRUCT) {
+                System.out.println("PASA COMP");
+                var sym = (Symbol) res1;
+                System.out.println(a.getValue().interpret(tree, table));
+                var structType = struct.getValuesStruct().get(a.getField().toLowerCase());
+                System.out.println("SYM: " + sym);
+                System.out.println("ST: " + structType);
+                if (!sym.getStruct().getId().equals(structType.getId())) {
+                    return new Error("SEMANTICO", "Instanciación de Struct Inválida: El campo: " + a.getField().toLowerCase() +" es del tipo Struct:  " + structType.getId() + ", no puede asignarle un valor del tipo Struct: " + sym.getStruct().getId(), this.line, this.column);
+                }
+            }*/
+            
+            val.put(a.getField().toLowerCase(), a.getValue().interpret(tree, table));
+        }
+        
+        Symbol symbol;
+        if (this.mutabilityType == MutabilityType.VAR) {
+            symbol = new Symbol(this.type, this.id, val, struct, true, this.line, this.column);
+        } else {
+            symbol = new Symbol(this.type, this.id, val, struct, false, this.line, this.column);
+        }
+
+        boolean creation = table.setVariable(symbol);
+        if (!creation) {
+            return new Error("SEMANTICO", "Instanciación de Struct Inválida: No puede declarar una variable ya existente", this.line, this.column);
+        }
+
+        return null;
+    }
+
+}

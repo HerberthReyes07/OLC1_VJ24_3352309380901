@@ -8,68 +8,69 @@ package analysis;
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int PAR_DER = 52;
+  public static final int PAR_DER = 53;
   public static final int KW_FALSE = 31;
   public static final int POT = 8;
-  public static final int MULT = 41;
+  public static final int MULT = 42;
   public static final int KW_REMOVE = 38;
   public static final int KW_ROUND = 32;
   public static final int KW_INT = 16;
   public static final int EQUALS = 9;
   public static final int ENTERO = 4;
   public static final int KW_FOR = 25;
-  public static final int XOR = 49;
+  public static final int XOR = 50;
   public static final int KW_DO = 26;
-  public static final int DOS_PUNTOS = 59;
+  public static final int DOS_PUNTOS = 60;
   public static final int KW_DOUBLE = 17;
   public static final int KW_CHAR = 19;
-  public static final int CORCHETE_DER = 56;
+  public static final int CORCHETE_DER = 57;
   public static final int KW_FIND = 34;
   public static final int KW_CONST = 14;
   public static final int KW_PRINTLN = 29;
-  public static final int LLAVE_IZQ = 53;
-  public static final int NOT = 50;
-  public static final int AND = 48;
-  public static final int IGUAL = 44;
+  public static final int LLAVE_IZQ = 54;
+  public static final int NOT = 51;
+  public static final int AND = 49;
+  public static final int IGUAL = 45;
   public static final int KW_APPEND = 37;
   public static final int CARACTER = 3;
-  public static final int OR = 47;
+  public static final int OR = 48;
   public static final int KW_MATCH = 23;
-  public static final int DIV = 42;
+  public static final int DIV = 43;
   public static final int KW_NEW = 36;
   public static final int UMENOS = 7;
-  public static final int PUNTO_COMA = 58;
+  public static final int PUNTO_COMA = 59;
   public static final int KW_BOOL = 18;
   public static final int ID = 6;
   public static final int KW_CONTINUE = 28;
   public static final int EOF = 0;
   public static final int DECIMAL = 5;
   public static final int error = 1;
-  public static final int COMA = 61;
+  public static final int COMA = 62;
   public static final int CADENA = 2;
-  public static final int MENOS = 40;
+  public static final int MENOS = 41;
   public static final int DIF = 10;
-  public static final int MAYOR_QUE = 46;
-  public static final int MOD = 43;
-  public static final int PAR_IZQ = 51;
+  public static final int MAYOR_QUE = 47;
+  public static final int MOD = 44;
+  public static final int PAR_IZQ = 52;
   public static final int KW_TRUE = 30;
   public static final int KW_IF = 21;
-  public static final int GUION_BAJO = 60;
-  public static final int PUNTO = 57;
-  public static final int LLAVE_DER = 54;
+  public static final int GUION_BAJO = 61;
+  public static final int PUNTO = 58;
+  public static final int LLAVE_DER = 55;
   public static final int KW_BREAK = 27;
   public static final int CASTEO_PREC = 13;
-  public static final int CORCHETE_IZQ = 55;
+  public static final int CORCHETE_IZQ = 56;
   public static final int MAYOR_IGUAL = 12;
   public static final int KW_ELSE = 22;
   public static final int KW_STRING = 20;
   public static final int KW_LIST = 35;
   public static final int KW_VAR = 15;
-  public static final int MENOR_QUE = 45;
+  public static final int MENOR_QUE = 46;
   public static final int KW_WHILE = 24;
+  public static final int KW_STRUCT = 39;
   public static final int MENOR_IGUAL = 11;
   public static final int KW_LENGTH = 33;
-  public static final int MAS = 39;
+  public static final int MAS = 40;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -110,6 +111,7 @@ public interface sym {
   "KW_NEW",
   "KW_APPEND",
   "KW_REMOVE",
+  "KW_STRUCT",
   "MAS",
   "MENOS",
   "MULT",

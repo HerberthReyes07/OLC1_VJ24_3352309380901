@@ -25,6 +25,11 @@ import instructions.VectorDeclaration;
 import instructions.VectorAssignment;
 import instructions.DynamicListDeclaration;
 import instructions.Append;
+import instructions.StructDeclaration;
+import instructions.StructField;
+import instructions.StructInstantiation;
+import instructions.StructValue;
+import instructions.StructAssignment;
 
 //expresiones
 import expressions.Native;
@@ -38,6 +43,7 @@ import expressions.VectorAccess;
 import expressions.Length;
 import expressions.Remove;
 import expressions.Find;
+import expressions.StructAccess;
 
 // parser
 parser code
@@ -74,6 +80,7 @@ terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING;
 terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
 terminal KW_ROUND, KW_LENGTH, KW_FIND;
 terminal KW_LIST, KW_NEW, KW_APPEND, KW_REMOVE;
+terminal KW_STRUCT;
 terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
 terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO, PUNTO_COMA, DOS_PUNTOS, GUION_BAJO, COMA;
 
@@ -82,6 +89,10 @@ nonterminal LinkedList<Instruction> INICIO, INSTRUCCIONES, DEFAULT_MATCH, LISTA_
 nonterminal LinkedList<CaseMatch> CASOS_MATCH;
 nonterminal LinkedList<LinkedList<Instruction>> LISTA_VALORES_V2D;
 nonterminal CaseMatch CASO_MATCH;
+nonterminal LinkedList<StructField> LISTA_STRUCT;
+nonterminal StructField CAMPO_STRUCT;
+nonterminal LinkedList<StructValue> LISTA_VALORES_STRUCT;
+nonterminal StructValue VALOR_STRUCT;
 nonterminal Type TIPO;
 nonterminal MutabilityType MUTABILIDAD;
 nonterminal Instruction INSTRUCCION;
@@ -90,6 +101,7 @@ nonterminal Instruction PRINTLN, DECLARACION, ASIGNACION, SENTENCIA_IF, SENTENCI
 nonterminal Instruction SENTENCIA_WHILE, SENTENCIA_DO_WHILE, SENTENCIA_FOR, ACTUALIZA_FOR, SENTENCIA_BREAK, SENTENCIA_CONTINUE;
 nonterminal Instruction DECLARACION_VECTORES_1D, ASIGNACION_VECTORES_1D, DECLARACION_VECTORES_2D, ASIGNACION_VECTORES_2D;
 nonterminal Instruction DECLARACION_LISTAS_DINAMICAS, AGREGAR_VALOR_LISTA, QUITAR_VALOR_LISTA;
+nonterminal Instruction DECLARACION_STRUCT, INSTANCIACION_STRUCT, ASIGNACION_STRUCT;
 nonterminal Instruction ROUND, LENGTH, FIND;
 
 //precedencia
@@ -117,9 +129,12 @@ INSTRUCCION ::= PRINTLN:a PUNTO_COMA        {:   RESULT = a;   :}
               | DECLARACION_VECTORES_1D:a PUNTO_COMA  {:   RESULT = a;   :}
               | DECLARACION_VECTORES_2D:a PUNTO_COMA  {:   RESULT = a;   :}
               | DECLARACION_LISTAS_DINAMICAS:a PUNTO_COMA   {:   RESULT = a;   :}
+              | DECLARACION_STRUCT:a PUNTO_COMA      {:   RESULT = a;   :}
+              | INSTANCIACION_STRUCT:a PUNTO_COMA    {:   RESULT = a;   :} 
               | ASIGNACION:a PUNTO_COMA     {:   RESULT = a;   :}
               | ASIGNACION_VECTORES_1D:a PUNTO_COMA   {:   RESULT = a;   :}
               | ASIGNACION_VECTORES_2D:a PUNTO_COMA   {:   RESULT = a;   :}
+              | ASIGNACION_STRUCT:a PUNTO_COMA    {:   RESULT = a;   :}
               | AGREGAR_VALOR_LISTA:a PUNTO_COMA  {:   RESULT = a;   :}
               | INCREMENTO_DECREMENTO:a PUNTO_COMA    {:   RESULT = a;   :}
               | SENTENCIA_IF:a              {:   RESULT = a;   :}
@@ -162,6 +177,7 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER {:   RESULT = new VectorAccess(a, b, aleft, aright);   :}
             | ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER CORCHETE_IZQ EXPRESION:c CORCHETE_DER {:   RESULT = new VectorAccess(a, b, c, aleft, aright);   :}
             | QUITAR_VALOR_LISTA:a    {:  RESULT = a;   :}
+            | ID:a PUNTO ID:b         {:   RESULT = new StructAccess(a, b, aleft, aright);   :}
             | ROUND:a       {:  RESULT = a;   :}
             | LENGTH:a      {:  RESULT = a;   :}
             | FIND:a        {:  RESULT = a;   :}
@@ -172,6 +188,7 @@ TIPO ::= KW_INT         {:   RESULT = new Type(DataType.ENTERO);     :}
        | KW_BOOL        {:   RESULT = new Type(DataType.BOOLEANO);   :}
        | KW_CHAR        {:   RESULT = new Type(DataType.CARACTER);   :}
        | KW_STRING      {:   RESULT = new Type(DataType.CADENA);     :}
+       | KW_STRUCT      {:   RESULT = new Type(DataType.STRUCT);     :}
 ;
 
 MUTABILIDAD ::= KW_CONST         {:   RESULT = MutabilityType.CONST;   :}
@@ -192,7 +209,14 @@ DECLARACION_VECTORES_2D ::= MUTABILIDAD:a ID:b DOS_PUNTOS TIPO:c CORCHETE_IZQ CO
 
 DECLARACION_LISTAS_DINAMICAS ::= KW_LIST MENOR_QUE TIPO:a MAYOR_QUE ID:b IGUAL KW_NEW KW_LIST PAR_IZQ PAR_DER
 {:   RESULT = new DynamicListDeclaration(b, a, aleft, aright );   :}
-; 
+;
+
+DECLARACION_STRUCT ::= KW_STRUCT LLAVE_IZQ LISTA_STRUCT:a LLAVE_DER ID:b      {:   RESULT = new StructDeclaration(a, b, aleft, aright );   :}
+;
+
+INSTANCIACION_STRUCT ::= MUTABILIDAD:a ID:b DOS_PUNTOS ID:c IGUAL LLAVE_IZQ LISTA_VALORES_STRUCT:d LLAVE_DER
+{:   RESULT = new StructInstantiation(a, b, c, d, aleft, aright );   :}
+;
 
 LISTA_VALORES_V1D ::= LISTA_VALORES_V1D:a COMA EXPRESION:b  {:   RESULT = a; RESULT.add(b); :}
                    | EXPRESION:a                            {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
@@ -202,6 +226,21 @@ LISTA_VALORES_V2D ::= LISTA_VALORES_V2D:a COMA CORCHETE_IZQ LISTA_VALORES_V1D:b 
                     | CORCHETE_IZQ LISTA_VALORES_V1D:a CORCHETE_DER                             {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
 ;
 
+LISTA_STRUCT ::= LISTA_STRUCT:a CAMPO_STRUCT:b PUNTO_COMA          {:   RESULT = a; RESULT.add(b); :}
+               | CAMPO_STRUCT:a PUNTO_COMA                         {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
+;
+
+CAMPO_STRUCT ::= ID:a DOS_PUNTOS TIPO:b     {:   RESULT = new StructField(a, b, aleft, aright);   :}
+            |    ID:a DOS_PUNTOS ID:b       {:   RESULT = new StructField(a, b, aleft, aright);   :}
+;
+
+LISTA_VALORES_STRUCT ::= LISTA_VALORES_STRUCT:a COMA VALOR_STRUCT:b     {:   RESULT = a; RESULT.add(b); :}
+                       | VALOR_STRUCT:a                                 {:   RESULT = new LinkedList<>(); RESULT.add(a);   :}
+;
+
+VALOR_STRUCT ::= ID:a DOS_PUNTOS EXPRESION:b    {:   RESULT = new StructValue(a, b, aleft, aright);   :}
+;
+
 ASIGNACION ::= ID:a IGUAL EXPRESION:b    {:   RESULT = new VariableAssignment(a, b, aleft, aright);   :}
 ;
 
@@ -209,6 +248,9 @@ ASIGNACION_VECTORES_1D ::= ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER IGUAL EXPR
 ;
 
 ASIGNACION_VECTORES_2D ::= ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER CORCHETE_IZQ EXPRESION:c CORCHETE_DER IGUAL EXPRESION:d    {:   RESULT = new VectorAssignment(a, b, c, d, aleft, aright);   :}
+;
+
+ASIGNACION_STRUCT ::= ID:a PUNTO ID:b IGUAL EXPRESION:c {:   RESULT = new StructAssignment(a, b, c, aleft, aright);   :}
 ;
 
 CASTEO ::= PAR_IZQ TIPO:a PAR_DER EXPRESION:b         {:   RESULT = new TypeCasting(a, b, aleft, aright);   :}%prec CASTEO_PREC

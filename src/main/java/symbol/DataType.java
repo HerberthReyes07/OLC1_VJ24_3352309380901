@@ -14,5 +14,6 @@ public enum DataType {
     BOOLEANO,
     CARACTER,
     CADENA,
+    STRUCT,
     VOID
 }

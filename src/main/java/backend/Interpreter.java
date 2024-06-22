@@ -60,6 +60,8 @@ public class Interpreter {
             this.semanticErrors = semanticErrors;
             this.console = ast.getConsole();
             
+            System.out.println(ast.getStructs());
+            
         } catch (Exception ex) {
             System.out.println("Algo salio mal");
             System.out.println(ex);

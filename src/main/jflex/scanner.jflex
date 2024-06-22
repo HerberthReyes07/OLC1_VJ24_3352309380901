@@ -87,6 +87,7 @@ KW_NEW = "new"
 KW_APPEND = "append"
 KW_REMOVE = "remove"
 KW_FIND = "find"
+KW_STRUCT = "struct"
 
 %%
 <YYINITIAL> {KW_CONST}  {return new Symbol(sym.KW_CONST, yyline, yycolumn, yytext());}
@@ -114,6 +115,7 @@ KW_FIND = "find"
 <YYINITIAL> {KW_APPEND}  {return new Symbol(sym.KW_APPEND, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_REMOVE}  {return new Symbol(sym.KW_REMOVE, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_FIND}  {return new Symbol(sym.KW_FIND, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_STRUCT}  {return new Symbol(sym.KW_STRUCT, yyline, yycolumn, yytext());}
 
 <YYINITIAL> {DECIMAL}   {return new Symbol(sym.DECIMAL, yyline, yycolumn, yytext());}
 <YYINITIAL> {ENTERO}    {return new Symbol(sym.ENTERO, yyline, yycolumn, yytext());}
