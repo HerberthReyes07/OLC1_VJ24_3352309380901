@@ -62,6 +62,7 @@ COMENTARIO_MULT = [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]
 BLANCOS = [\ \r\t\n\f]+
 
 //palabras reservadas
+KW_START_WITH = "start_with"
 KW_CONST = "const"
 KW_VAR = "var"
 KW_INT = "int"
@@ -69,6 +70,7 @@ KW_DOUBLE = "double"
 KW_BOOL = "bool"
 KW_CHAR = "char"
 KW_STRING = "string"
+KW_VOID = "void"
 KW_IF = "if"
 KW_ELSE = "else"
 KW_MATCH = "match"
@@ -91,6 +93,7 @@ KW_STRUCT = "struct"
 KW_TO_STRING = "toString"
 
 %%
+<YYINITIAL> {KW_START_WITH}  {return new Symbol(sym.KW_START_WITH, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_TO_STRING}  {return new Symbol(sym.KW_TO_STRING, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_CONST}  {return new Symbol(sym.KW_CONST, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_VAR}  {return new Symbol(sym.KW_VAR, yyline, yycolumn, yytext());}
@@ -99,6 +102,7 @@ KW_TO_STRING = "toString"
 <YYINITIAL> {KW_BOOL}  {return new Symbol(sym.KW_BOOL, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_CHAR}  {return new Symbol(sym.KW_CHAR, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_STRING}  {return new Symbol(sym.KW_STRING, yyline, yycolumn, yytext());}
+<YYINITIAL> {KW_VOID}  {return new Symbol(sym.KW_VOID, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_IF}  {return new Symbol(sym.KW_IF, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_ELSE}  {return new Symbol(sym.KW_ELSE, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_MATCH}  {return new Symbol(sym.KW_MATCH, yyline, yycolumn, yytext());}

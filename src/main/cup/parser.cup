@@ -3,6 +3,7 @@ package analysis;
 //importaciones
 import java_cup.runtime.Symbol;
 import java.util.LinkedList;
+import java.util.HashMap;
 import abstracto.Instruction;
 import symbol.Type;
 import symbol.DataType;
@@ -30,6 +31,8 @@ import instructions.StructField;
 import instructions.StructInstantiation;
 import instructions.StructValue;
 import instructions.StructAssignment;
+import instructions.Method;
+import instructions.StartWith;
 
 //expresiones
 import expressions.Native;
@@ -77,11 +80,11 @@ action code
 //terminales
 terminal String CADENA, CARACTER, ENTERO, DECIMAL, ID;
 terminal UMENOS, POT, EQUALS, DIF, MENOR_IGUAL, MAYOR_IGUAL, CASTEO_PREC;
-terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING; 
+terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING, KW_VOID; 
 terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
 terminal KW_ROUND, KW_LENGTH, KW_FIND, KW_TO_STRING;
 terminal KW_LIST, KW_NEW, KW_APPEND, KW_REMOVE;
-terminal KW_STRUCT;
+terminal KW_STRUCT, KW_START_WITH;
 terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
 terminal PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER, CORCHETE_IZQ, CORCHETE_DER, PUNTO, PUNTO_COMA, DOS_PUNTOS, GUION_BAJO, COMA;
 
@@ -104,6 +107,10 @@ nonterminal Instruction DECLARACION_VECTORES_1D, ASIGNACION_VECTORES_1D, DECLARA
 nonterminal Instruction DECLARACION_LISTAS_DINAMICAS, AGREGAR_VALOR_LISTA, QUITAR_VALOR_LISTA;
 nonterminal Instruction DECLARACION_STRUCT, INSTANCIACION_STRUCT, ASIGNACION_STRUCT;
 nonterminal Instruction ROUND, LENGTH, FIND, TO_STRING;
+nonterminal Instruction METODO;
+nonterminal LinkedList<HashMap> PARAMETROS;
+nonterminal Instruction START_WITH;
+nonterminal LinkedList<Instruction> PARAMETROS_LLAMADA;
 
 //precedencia
 precedence left OR;
@@ -145,6 +152,8 @@ INSTRUCCION ::= PRINTLN:a PUNTO_COMA        {:   RESULT = a;   :}
               | SENTENCIA_DO_WHILE:a PUNTO_COMA       {:   RESULT = a;   :}
               | SENTENCIA_BREAK:a PUNTO_COMA          {:   RESULT = a;   :}
               | SENTENCIA_CONTINUE:a PUNTO_COMA       {:   RESULT = a;   :}
+              | METODO:a                              {:   RESULT = a;   :}
+              | START_WITH:a PUNTO_COMA               {:   RESULT = a;   :}
               | error PUNTO_COMA
               | error 
 ;
@@ -191,6 +200,7 @@ TIPO ::= KW_INT         {:   RESULT = new Type(DataType.ENTERO);     :}
        | KW_CHAR        {:   RESULT = new Type(DataType.CARACTER);   :}
        | KW_STRING      {:   RESULT = new Type(DataType.CADENA);     :}
        | KW_STRUCT      {:   RESULT = new Type(DataType.STRUCT);     :}
+       | KW_VOID        {:   RESULT = new Type(DataType.VOID);       :}
 ;
 
 MUTABILIDAD ::= KW_CONST         {:   RESULT = MutabilityType.CONST;   :}
@@ -321,4 +331,38 @@ SENTENCIA_BREAK ::= KW_BREAK:a          {:   RESULT = new Break(aleft, aright); 
 ;
 
 SENTENCIA_CONTINUE ::= KW_CONTINUE:a    {:   RESULT = new Continue(aleft, aright);   :}
+;
+
+METODO ::= TIPO:a ID:b PAR_IZQ PARAMETROS:p PAR_DER LLAVE_IZQ INSTRUCCIONES:c LLAVE_DER   {:   RESULT = new Method(b, p, c, a, aleft, aright);   :}
+         | TIPO:a ID:b PAR_IZQ PAR_DER LLAVE_IZQ INSTRUCCIONES:c LLAVE_DER                {:   RESULT = new Method(b, new LinkedList<HashMap>(), c, a, aleft, aright);   :}
+;
+
+PARAMETROS ::= PARAMETROS:a COMA TIPO:b ID:c   {:  
+                                                    RESULT = a;
+                                                    var hm2= new HashMap<String, Object>();
+                                                    hm2.put("id", c);
+                                                    hm2.put("tipo", b);
+                                                    RESULT.add(hm2);
+                                                :}
+             | TIPO:a ID:b                      {:  
+                                                    RESULT = new LinkedList<HashMap>(); 
+                                                    var hm = new HashMap<String, Object>();
+                                                    hm.put("id",b);
+                                                    hm.put("tipo", a);
+                                                    RESULT.add(hm);
+                                                :}
+;
+
+START_WITH ::= KW_START_WITH ID:a PAR_IZQ PARAMETROS_LLAMADA:b PAR_DER     {:   RESULT = new StartWith(a, b, aleft, aright );   :}
+             | KW_START_WITH ID:a PAR_IZQ PAR_DER                          {:   RESULT = new StartWith(a, new LinkedList<Instruction>(), aleft, aright );   :}
+;
+
+PARAMETROS_LLAMADA ::= PARAMETROS_LLAMADA:a COMA EXPRESION:e    {:  
+                                                                    RESULT = a;
+                                                                    RESULT.add(e);
+                                                                :}
+                     | EXPRESION:a                              {:  
+                                                                    RESULT = new LinkedList<Instruction>(); 
+                                                                    RESULT.add(a);
+                                                                :}
 ;

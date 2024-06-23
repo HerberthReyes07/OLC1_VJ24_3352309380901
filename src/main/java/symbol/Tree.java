@@ -5,6 +5,7 @@
 package symbol;
 
 import abstracto.Instruction;
+import instructions.Method;
 import java.util.LinkedList;
 
 /**
@@ -12,13 +13,14 @@ import java.util.LinkedList;
  * @author herberthreyes
  */
 public class Tree {
-    
+
     private LinkedList<Instruction> instructions;
     private String console;
     private SymbolTable globalTable;
     private LinkedList<Error> errors;
     private LinkedList<SymbolTable> tables;
     private LinkedList<Struct> structs;
+    private LinkedList<Instruction> functions;
 
     public Tree(LinkedList<Instruction> instructions) {
         this.instructions = instructions;
@@ -27,8 +29,9 @@ public class Tree {
         this.errors = new LinkedList<>();
         this.tables = new LinkedList<>();
         this.structs = new LinkedList<>();
+        this.functions = new LinkedList<>();
     }
-    
+
     public void Print(String value) {
         //this.console += "> " + value + "\n";
         this.console += value + "\n";
@@ -82,14 +85,40 @@ public class Tree {
         this.structs = structs;
     }
 
-    public void addStruct(Struct struct){
+    public LinkedList<Instruction> getFunctions() {
+        return functions;
+    }
+
+    public void setFunctions(LinkedList<Instruction> functions) {
+        this.functions = functions;
+    }
+
+    public void addStruct(Struct struct) {
         this.structs.add(struct);
     }
-    
-    public Struct getStruct (String id){
+
+    public Struct getStruct(String id) {
         for (var a : this.structs) {
             if (a.getId().equalsIgnoreCase(id)) {
                 return a;
+            }
+        }
+        return null;
+    }
+
+    public void addFunction(Instruction function) {
+        //verificar que no hay una funcion con el mismo nombre
+        this.functions.add(function);
+    }
+
+    public Instruction getFunction(String id) {
+        for (var i : this.functions) {
+            if (i instanceof Method) {
+                
+                var method = (Method) i;
+                if (method.id.equalsIgnoreCase(id)) {
+                    return i;
+                }
             }
         }
         return null;
