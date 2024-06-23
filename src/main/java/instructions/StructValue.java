@@ -21,6 +21,7 @@ public class StructValue extends Instruction {
     
     private String field;
     private Instruction value;
+    private Symbol auxSym;
 
     public StructValue(String field, Instruction value, int line, int column) {
         super(new Type(DataType.VOID), line, column);
@@ -35,11 +36,11 @@ public class StructValue extends Instruction {
         if (val instanceof Error) {
             return val;
         }
-        /*if (this.value instanceof VariableAccess) {
-            System.out.println("ES ACCESO A VARIABLE");
+        //ver si funciona o mejor quitarlo: 
+        if (this.value instanceof VariableAccess && this.value.type.getDataType() == DataType.STRUCT) {
             VariableAccess va = (VariableAccess) this.value;
-            System.out.println(va.getId());
-        }*/
+            auxSym = table.getVariable(va.getId());
+        }
         this.type.setType(this.value.type.getDataType());
         return null;
     }
@@ -51,5 +52,9 @@ public class StructValue extends Instruction {
     public Instruction getValue() {
         return value;
     }
-    
+
+    public Symbol getAuxSym() {
+        return auxSym;
+    }
+
 }

@@ -66,17 +66,13 @@ public class StructInstantiation extends Instruction {
                 return new Error("SEMANTICO", "Instanciación de Struct Inválida: El campo: " + a.getField().toLowerCase() +" es del tipo " + aux2 + ", no puede asignarle un valor del tipo " + a.type.getDataType(), this.line, this.column);
             }
             
-            /*if (a.type.getDataType() == DataType.STRUCT) {
-                System.out.println("PASA COMP");
-                var sym = (Symbol) res1;
-                System.out.println(a.getValue().interpret(tree, table));
+            if (a.type.getDataType() == DataType.STRUCT) {
+                var sym = a.getAuxSym();
                 var structType = struct.getValuesStruct().get(a.getField().toLowerCase());
-                System.out.println("SYM: " + sym);
-                System.out.println("ST: " + structType);
                 if (!sym.getStruct().getId().equals(structType.getId())) {
-                    return new Error("SEMANTICO", "Instanciación de Struct Inválida: El campo: " + a.getField().toLowerCase() +" es del tipo Struct:  " + structType.getId() + ", no puede asignarle un valor del tipo Struct: " + sym.getStruct().getId(), this.line, this.column);
+                    return new Error("SEMANTICO", "Instanciación de Struct Inválida: El campo: " + a.getField().toLowerCase() +" es del tipo Struct: " + structType.getId() + ", no puede asignarle un valor del tipo Struct: " + sym.getStruct().getId(), this.line, this.column);
                 }
-            }*/
+            }
             
             val.put(a.getField().toLowerCase(), a.getValue().interpret(tree, table));
         }

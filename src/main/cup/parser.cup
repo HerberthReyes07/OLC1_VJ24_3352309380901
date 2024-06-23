@@ -43,6 +43,7 @@ import expressions.VectorAccess;
 import expressions.Length;
 import expressions.Remove;
 import expressions.Find;
+import expressions.ToString;
 import expressions.StructAccess;
 
 // parser
@@ -78,7 +79,7 @@ terminal String CADENA, CARACTER, ENTERO, DECIMAL, ID;
 terminal UMENOS, POT, EQUALS, DIF, MENOR_IGUAL, MAYOR_IGUAL, CASTEO_PREC;
 terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING; 
 terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
-terminal KW_ROUND, KW_LENGTH, KW_FIND;
+terminal KW_ROUND, KW_LENGTH, KW_FIND, KW_TO_STRING;
 terminal KW_LIST, KW_NEW, KW_APPEND, KW_REMOVE;
 terminal KW_STRUCT;
 terminal MAS, MENOS, MULT, DIV, MOD, IGUAL, MENOR_QUE, MAYOR_QUE, OR, AND, XOR, NOT;
@@ -102,7 +103,7 @@ nonterminal Instruction SENTENCIA_WHILE, SENTENCIA_DO_WHILE, SENTENCIA_FOR, ACTU
 nonterminal Instruction DECLARACION_VECTORES_1D, ASIGNACION_VECTORES_1D, DECLARACION_VECTORES_2D, ASIGNACION_VECTORES_2D;
 nonterminal Instruction DECLARACION_LISTAS_DINAMICAS, AGREGAR_VALOR_LISTA, QUITAR_VALOR_LISTA;
 nonterminal Instruction DECLARACION_STRUCT, INSTANCIACION_STRUCT, ASIGNACION_STRUCT;
-nonterminal Instruction ROUND, LENGTH, FIND;
+nonterminal Instruction ROUND, LENGTH, FIND, TO_STRING;
 
 //precedencia
 precedence left OR;
@@ -179,6 +180,7 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | QUITAR_VALOR_LISTA:a    {:  RESULT = a;   :}
             | ID:a PUNTO ID:b         {:   RESULT = new StructAccess(a, b, aleft, aright);   :}
             | ROUND:a       {:  RESULT = a;   :}
+            | TO_STRING:a   {:  RESULT = a;   :}
             | LENGTH:a      {:  RESULT = a;   :}
             | FIND:a        {:  RESULT = a;   :}
 ;
@@ -274,6 +276,9 @@ ROUND ::= KW_ROUND PAR_IZQ EXPRESION:a PAR_DER        {:   RESULT = new Round(a,
 
 LENGTH ::= KW_LENGTH PAR_IZQ EXPRESION:a PAR_DER      {:   RESULT = new Length(a, aleft, aright);    :}
 ;
+
+TO_STRING ::= KW_TO_STRING PAR_IZQ EXPRESION:a PAR_DER           {:   RESULT = new ToString(a, aleft, aright);   :}
+; 
 
 FIND ::= ID:a PUNTO KW_FIND PAR_IZQ EXPRESION:b PAR_DER          {:   RESULT = new Find(a, b, aleft, aright);    :}
 ;

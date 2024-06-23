@@ -88,8 +88,10 @@ KW_APPEND = "append"
 KW_REMOVE = "remove"
 KW_FIND = "find"
 KW_STRUCT = "struct"
+KW_TO_STRING = "toString"
 
 %%
+<YYINITIAL> {KW_TO_STRING}  {return new Symbol(sym.KW_TO_STRING, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_CONST}  {return new Symbol(sym.KW_CONST, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_VAR}  {return new Symbol(sym.KW_VAR, yyline, yycolumn, yytext());}
 <YYINITIAL> {KW_INT}  {return new Symbol(sym.KW_INT, yyline, yycolumn, yytext());}
