@@ -9,6 +9,7 @@ import symbol.SymbolTable;
 import symbol.Tree;
 import symbol.Type;
 import exceptions.Error;
+import expressions.Return;
 import java.util.LinkedList;
 import symbol.DataType;
 
@@ -62,38 +63,6 @@ public class If extends Instruction {
 
     private Object executeIf(Object condition, Tree tree, SymbolTable table) {
 
-        /*var newTable = new SymbolTable(table);
-        newTable.setName(table.getName() + "IF");
-        for (var a : this.instructionsIf) {
-            if (a == null) {
-                continue;
-            }
-            if (a instanceof If) {
-                break;
-            }
-            if (a instanceof Declaration) {
-                a.interpret(tree, newTable);
-            }
-        }
-        tree.getTables().add(newTable);
-
-        var newTable2 = new SymbolTable(table);
-        newTable2.setName(table.getName() + "-ELSE");
-        if (this.instructionsElse != null) {
-            for (var a : this.instructionsElse) {
-                if (a == null) {
-                    continue;
-                }
-                if (a instanceof If) {
-                    break;
-                }
-                if (a instanceof Declaration) {
-                    a.interpret(tree, newTable2);
-                }
-            }
-            tree.getTables().add(newTable2);
-        }*/
-
         if ((boolean) condition) {
             var newTable = new SymbolTable(table);
             newTable.setName(table.getName() + "-IF");
@@ -102,6 +71,10 @@ public class If extends Instruction {
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Return) {
+                    a.interpret(tree, newTable);
+                    return a;
+                }
                 if (a instanceof Break || a instanceof Continue) {
                     return a;
                 }
@@ -109,7 +82,7 @@ public class If extends Instruction {
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL IF
                 }
-                if (res1 instanceof Break || res1 instanceof Continue) {
+                if (res1 instanceof Break || res1 instanceof Continue || res1 instanceof Return) {
                     return res1;
                 }
             }
@@ -117,11 +90,15 @@ public class If extends Instruction {
         } else {
             if (this.instructionsElse != null) {
                 var newTable2 = new SymbolTable(table);
-                newTable2.setName(table.getName()+"-ELSE");
+                newTable2.setName(table.getName() + "-ELSE");
                 tree.getTables().add(newTable2);
                 for (var a : this.instructionsElse) {
                     if (a == null) {
                         continue;
+                    }
+                    if (a instanceof Return) {
+                        a.interpret(tree, newTable2);
+                        return a;
                     }
                     if (a instanceof Break || a instanceof Continue) {
                         return a;
@@ -130,7 +107,7 @@ public class If extends Instruction {
                     if (res2 instanceof Error) {
                         return res2;
                     }
-                    if (res2 instanceof Break || res2 instanceof Continue) {
+                    if (res2 instanceof Break || res2 instanceof Continue || res2 instanceof Return) {
                         return res2;
                     }
                 }
@@ -140,7 +117,7 @@ public class If extends Instruction {
                 if (res3 instanceof Error) {
                     return res3;
                 }
-                if (res3 instanceof Break || res3 instanceof Continue) {
+                if (res3 instanceof Break || res3 instanceof Continue || res3 instanceof Return) {
                     return res3;
                 }
             }

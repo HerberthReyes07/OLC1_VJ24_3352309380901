@@ -11,6 +11,7 @@ import symbol.SymbolTable;
 import symbol.Tree;
 import symbol.Type;
 import exceptions.Error;
+import expressions.Return;
 
 /**
  *
@@ -66,6 +67,10 @@ public class For extends Instruction{
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Return) {
+                    a.interpret(tree, newTable2);
+                    return a;
+                }
                 if (a instanceof Break) {
                     return null;
                 }
@@ -75,6 +80,9 @@ public class For extends Instruction{
                 var res1 = a.interpret(tree, newTable2);
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL IF
+                }
+                if (res1 instanceof Return) {
+                    return res1;
                 }
                 if (res1 instanceof Break) {
                     return null;

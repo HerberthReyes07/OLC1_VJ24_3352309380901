@@ -11,6 +11,7 @@ import symbol.SymbolTable;
 import symbol.Tree;
 import symbol.Type;
 import exceptions.Error;
+import expressions.Return;
 
 /**
  *
@@ -53,6 +54,10 @@ public class DoWhile extends Instruction {
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Return) {
+                    a.interpret(tree, newTable);
+                    return a;
+                }
                 if (a instanceof Break) {
                     return null;
                 }
@@ -62,6 +67,9 @@ public class DoWhile extends Instruction {
                 var res1 = a.interpret(tree, newTable);
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL DO-WHILE
+                }
+                if (res1 instanceof Return) {
+                    return res1;
                 }
                 if (res1 instanceof Break) {
                     return null;

@@ -1,0 +1,170 @@
+START_WITH main();
+
+void main() {
+    println("Inicio del programa de prueba\n");
+    
+    saludo();
+    /*println("CON FOR: " + conFor());
+    println("CON WHILE: " + conWhile());
+    println("CON DO_WHILE: " + conDoWhile());   
+    println("PRUEBA: " + p1(1));
+    p2(-1);
+    p3();
+    p4();
+    p5(5);*/
+    p6(-1);
+    println("Fin del programa de prueba");
+}
+
+int conFor() {
+  var i: int;
+  const num: int = 12;
+  for (i = 0; i < 11; i++) {
+      if (i == 5) {
+          if (num == 12) {
+              return i + num;
+          }
+          //var suma: int = i + 10;
+          
+      }
+  }
+}
+
+bool conWhile() {
+  var cont: int = 0;
+  while(true) {
+      if (cont == 6) {
+          //var result: bool = !!!true;
+          return !!!true;
+      }
+      cont++;
+  }
+}
+
+double conDoWhile() {
+  var cont: int = 0;
+  do {
+      if (cont == 3) {
+          //var rs: double = 5.5 + cont;
+          return 5.5 + cont;
+      }
+      cont++;
+  } while (cont <= 5);
+}
+
+void saludo() {
+  println("HOLA MUNDO");
+}
+
+int p1(int a){
+  if (a > 0){
+    return 1;
+  }
+  return 0;
+}
+
+void p2(int a) {
+  if (a>0){
+    println("Es mayor a 0");
+    return;
+  }
+  var cont: int = 0;
+  while(true) {
+      println("cont: " + cont);
+      if (cont == 6) {
+          println("SE ACABO");
+          return;
+      }
+      cont++;
+  }
+}
+
+
+void p3(){
+  var i: int = 1; // Inicializar el contador externo
+  do {
+      var j: int = 1; // Inicializar el contador interno
+      do {
+          println("i = " + i + ", j = " + j);
+          if ((i == 2) && (j == 2)){
+              println("SE ACABO");
+              return;
+          }
+          j++; // Incrementar el contador interno
+      } while (j <= 3); // Condición del bucle interno
+      i++; // Incrementar el contador externo
+  } while (i <= 3);
+}
+
+void p4() {
+  var i : int = 0;
+  for(i = 0; i < 8; i++){
+    if (i < 3){
+      println("MENOR QUE 3"); 
+    } else if (i == 5){
+      println("IGUAL A 5 FIN");
+      return;
+      println("A");
+    } else {
+      println("NO ES IGUAL A 5");
+    }
+    println(i);
+  }
+}
+
+void p5(int n) {
+  var m : int = 0;
+  while (m < 4) {
+    println("Valor de m: " + m);
+    var p : int = 0;
+    
+    while (p < n) {
+        println("Valor de p: " + p);
+        
+        if (p % 2 == 0) {
+            println("p es par");
+        } else {
+            println("p es impar");
+        }
+        
+        if ((p == 4) && (m == 2)) {
+            println("Return en p = 4 y m = 2");
+            return;
+        }
+        
+        p++;
+    }
+    
+    m++;
+    println("\nIteración del ciclo externo completada\n");
+  }
+}
+
+void p6(int a){
+  var aux: int = a;
+  while (aux < 5) {
+    match aux {
+        3 => {
+            const a: int = 33;
+            println(a); 
+            println("TRES");
+        }
+        2 => {
+            const a: int = 22;
+            println(a); 
+            println("DOS ->> FINAL");
+            return;
+            //break;
+        }
+        1 => {
+            const a: int = 11;
+            println(a); 
+            println("UNO");
+        }
+        _ => { 
+            println("NO ES UNO, DOS O TRES. ES: " + aux);
+        }
+    }  
+    aux++;
+  }
+}

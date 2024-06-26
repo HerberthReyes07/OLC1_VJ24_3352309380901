@@ -40,7 +40,8 @@ public class StartWith extends Instruction {
             var method = (Method) search;
 
             var newTable = new SymbolTable(tree.getGlobalTable());
-            newTable.setName("START_WITH-");
+            newTable.setName(newTable.getPreviousTable().getName() + "-START_WITH-" + method.id);
+            tree.getTables().add(newTable);
 
             if (parameters.size() != method.parameters.size()) {
                 return new Error("SEMANTICO", "Uso de función start_with Inválido. Faltan parametros en la llamada de la función: " + id, this.line, this.column);

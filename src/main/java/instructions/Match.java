@@ -11,6 +11,7 @@ import symbol.SymbolTable;
 import symbol.Tree;
 import symbol.Type;
 import exceptions.Error;
+import expressions.Return;
 
 /**
  *
@@ -77,7 +78,7 @@ public class Match extends Instruction {
                     if (res1 instanceof Error) {
                         return res1; //TERMINA LA SECUENCIA DEL MATCH
                     }
-                    if (res1 instanceof Break) {
+                    if (res1 instanceof Break || res1 instanceof Return) {
                         return res1;
                     }
                     return null;
@@ -93,14 +94,19 @@ public class Match extends Instruction {
                 if (a == null) {
                     continue;
                 }
+                if (a instanceof Return) {
+                    a.interpret(tree, newTableDefault);
+                    return a;
+                }
                 if (a instanceof Break) {
                     return a;
                 }
                 var res1 = a.interpret(tree, newTableDefault);
+
                 if (res1 instanceof Error) {
                     return res1; //TERMINA LA SECUENCIA DEL MATCH
                 }
-                if (res1 instanceof Break) {
+                if (res1 instanceof Break || res1 instanceof Return) {
                     return res1;
                 }
             }

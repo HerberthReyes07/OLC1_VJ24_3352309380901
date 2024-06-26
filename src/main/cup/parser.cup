@@ -48,6 +48,8 @@ import expressions.Remove;
 import expressions.Find;
 import expressions.ToString;
 import expressions.StructAccess;
+import expressions.MethodCall;
+import expressions.Return;
 
 // parser
 parser code
@@ -81,7 +83,8 @@ action code
 terminal String CADENA, CARACTER, ENTERO, DECIMAL, ID;
 terminal UMENOS, POT, EQUALS, DIF, MENOR_IGUAL, MAYOR_IGUAL, CASTEO_PREC;
 terminal KW_CONST, KW_VAR, KW_INT, KW_DOUBLE, KW_BOOL, KW_CHAR, KW_STRING, KW_VOID; 
-terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_BREAK, KW_CONTINUE, KW_PRINTLN, KW_TRUE, KW_FALSE;
+terminal KW_IF, KW_ELSE, KW_MATCH, KW_WHILE, KW_FOR, KW_DO, KW_PRINTLN, KW_TRUE, KW_FALSE;
+terminal KW_BREAK, KW_CONTINUE, KW_RETURN;
 terminal KW_ROUND, KW_LENGTH, KW_FIND, KW_TO_STRING;
 terminal KW_LIST, KW_NEW, KW_APPEND, KW_REMOVE;
 terminal KW_STRUCT, KW_START_WITH;
@@ -109,7 +112,7 @@ nonterminal Instruction DECLARACION_STRUCT, INSTANCIACION_STRUCT, ASIGNACION_STR
 nonterminal Instruction ROUND, LENGTH, FIND, TO_STRING;
 nonterminal Instruction METODO;
 nonterminal LinkedList<HashMap> PARAMETROS;
-nonterminal Instruction START_WITH;
+nonterminal Instruction START_WITH, LLAMADA, SENTENCIA_RETURN;
 nonterminal LinkedList<Instruction> PARAMETROS_LLAMADA;
 
 //precedencia
@@ -153,6 +156,8 @@ INSTRUCCION ::= PRINTLN:a PUNTO_COMA        {:   RESULT = a;   :}
               | SENTENCIA_BREAK:a PUNTO_COMA          {:   RESULT = a;   :}
               | SENTENCIA_CONTINUE:a PUNTO_COMA       {:   RESULT = a;   :}
               | METODO:a                              {:   RESULT = a;   :}
+              | LLAMADA:a PUNTO_COMA                  {:   RESULT = a;   :}
+              | SENTENCIA_RETURN:a PUNTO_COMA         {:   RESULT = a;   :}
               | START_WITH:a PUNTO_COMA               {:   RESULT = a;   :}
               | error PUNTO_COMA
               | error 
@@ -192,6 +197,7 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | TO_STRING:a   {:  RESULT = a;   :}
             | LENGTH:a      {:  RESULT = a;   :}
             | FIND:a        {:  RESULT = a;   :}
+            | LLAMADA:a     {:  RESULT = a;   :}
 ;
 
 TIPO ::= KW_INT         {:   RESULT = new Type(DataType.ENTERO);     :}
@@ -333,6 +339,10 @@ SENTENCIA_BREAK ::= KW_BREAK:a          {:   RESULT = new Break(aleft, aright); 
 SENTENCIA_CONTINUE ::= KW_CONTINUE:a    {:   RESULT = new Continue(aleft, aright);   :}
 ;
 
+SENTENCIA_RETURN ::= KW_RETURN:a EXPRESION:b    {:   RESULT = new Return(b, aleft, aright);   :}
+                   | KW_RETURN:a                {:   RESULT = new Return(aleft, aright);   :}
+;
+
 METODO ::= TIPO:a ID:b PAR_IZQ PARAMETROS:p PAR_DER LLAVE_IZQ INSTRUCCIONES:c LLAVE_DER   {:   RESULT = new Method(b, p, c, a, aleft, aright);   :}
          | TIPO:a ID:b PAR_IZQ PAR_DER LLAVE_IZQ INSTRUCCIONES:c LLAVE_DER                {:   RESULT = new Method(b, new LinkedList<HashMap>(), c, a, aleft, aright);   :}
 ;
@@ -355,6 +365,10 @@ PARAMETROS ::= PARAMETROS:a COMA TIPO:b ID:c   {:
 
 START_WITH ::= KW_START_WITH ID:a PAR_IZQ PARAMETROS_LLAMADA:b PAR_DER     {:   RESULT = new StartWith(a, b, aleft, aright );   :}
              | KW_START_WITH ID:a PAR_IZQ PAR_DER                          {:   RESULT = new StartWith(a, new LinkedList<Instruction>(), aleft, aright );   :}
+;
+
+LLAMADA ::= ID:a PAR_IZQ PARAMETROS_LLAMADA:b PAR_DER               {:  RESULT= new MethodCall(a, b, aleft, aright);    :}
+          | ID:a PAR_IZQ PAR_DER                                    {:  RESULT= new MethodCall(a, new LinkedList<Instruction>(), aleft, aright);    :}    
 ;
 
 PARAMETROS_LLAMADA ::= PARAMETROS_LLAMADA:a COMA EXPRESION:e    {:  

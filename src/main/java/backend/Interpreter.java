@@ -101,7 +101,8 @@ public class Interpreter {
             
             var resultStartWith = sw.interpret(ast, table);
             if (resultStartWith instanceof Error) {
-                System.out.println("ERROR AL EJECUTAR START_WITH");
+                //System.out.println("ERROR AL EJECUTAR START_WITH");
+                semanticErrors.add((Error) resultStartWith);
             }
 
             this.symbolTable = new LinkedList<>();

@@ -10,6 +10,7 @@ import symbol.SymbolTable;
 import symbol.Tree;
 import symbol.Type;
 import exceptions.Error;
+import expressions.Return;
 import java.util.LinkedList;
 
 /**
@@ -53,6 +54,10 @@ public class CaseMatch extends Instruction {
             if (a == null) {
                 continue;
             }
+            if (a instanceof Return) {
+                a.interpret(tree, newTable);
+                return a;
+            }
             if (a instanceof Break || a instanceof Continue) {
                 return a;
             }
@@ -60,7 +65,7 @@ public class CaseMatch extends Instruction {
             if (res1 instanceof Error) {
                 return res1; //TERMINA LA SECUENCIA DEL IF
             }
-            if (res1 instanceof Break || res1 instanceof Continue) {
+            if (res1 instanceof Break || res1 instanceof Continue || res1 instanceof Return) {
                 return res1;
             }
         }

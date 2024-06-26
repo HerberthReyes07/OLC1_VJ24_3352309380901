@@ -1,0 +1,34 @@
+START_WITH main();
+
+void main() {
+    println("Inicio del programa de prueba");
+    println("Probando recursividad para calcular factorial");
+
+    // Llamamos a la función recursiva
+    calcularFactorial();
+
+    println("Fin del programa de prueba");
+}
+
+// Función recursiva para calcular el factorial de un número
+int factorial(int n) {
+    println("n: " + n);
+    if (n <= 1) {
+        println("Caso base alcanzado");
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+void calcularFactorial() {
+    const numero: int = 5;
+    const resultado: int = factorial(numero);
+
+    if (resultado == 120) {
+        println("Factorial calculado correctamente");
+        return;
+    }
+    println("Error en el cálculo del factorial");
+}
+

@@ -1,0 +1,40 @@
+START_WITH main();
+
+void main() {
+    println("Inicio del programa de prueba");
+    println("Probando recursividad con ciclo y return");
+
+    // Llamamos a la función recursiva con ciclo
+    calcularSumaRecursiva();
+
+    println("Fin del programa de prueba");
+}
+
+// Función recursiva para calcular la suma de los primeros n números naturales
+int suma(int n) {
+    println("n: " + n);
+    if (n <= 1) {
+        println("Caso base alcanzado");
+        return n;
+    } else {
+        var sumaParcial: int = 0;
+        var i: int = 0;
+        for (i = 1; i <= n; i++) {
+            sumaParcial = sumaParcial + i;
+        }
+        println("Suma parcial: " + sumaParcial);
+        return sumaParcial + suma(n - 1);
+    }
+}
+
+void calcularSumaRecursiva() {
+    const numero: int = 5;
+    const resultado: int = suma(numero);
+
+    if (resultado == 15) {
+        println("Suma recursiva calculada correctamente");
+        return;
+    }
+    println("Error en el cálculo de la suma recursiva");
+}
+
