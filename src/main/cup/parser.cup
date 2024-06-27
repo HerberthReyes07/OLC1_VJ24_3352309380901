@@ -114,6 +114,7 @@ nonterminal Instruction METODO;
 nonterminal LinkedList<HashMap> PARAMETROS;
 nonterminal Instruction START_WITH, LLAMADA, SENTENCIA_RETURN;
 nonterminal LinkedList<Instruction> PARAMETROS_LLAMADA;
+nonterminal LinkedList<String> ACCESO_STRUCT;
 
 //precedencia
 precedence left OR;
@@ -192,7 +193,7 @@ EXPRESION ::= MENOS EXPRESION:a               {:   RESULT = new Arithmetic(a, Op
             | ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER {:   RESULT = new VectorAccess(a, b, aleft, aright);   :}
             | ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER CORCHETE_IZQ EXPRESION:c CORCHETE_DER {:   RESULT = new VectorAccess(a, b, c, aleft, aright);   :}
             | QUITAR_VALOR_LISTA:a    {:  RESULT = a;   :}
-            | ID:a PUNTO ID:b         {:   RESULT = new StructAccess(a, b, aleft, aright);   :}
+            | ACCESO_STRUCT:a         {:  RESULT = new StructAccess(a, aleft, aright);   :}
             | ROUND:a       {:  RESULT = a;   :}
             | TO_STRING:a   {:  RESULT = a;   :}
             | LENGTH:a      {:  RESULT = a;   :}
@@ -257,6 +258,7 @@ LISTA_VALORES_STRUCT ::= LISTA_VALORES_STRUCT:a COMA VALOR_STRUCT:b     {:   RES
 ;
 
 VALOR_STRUCT ::= ID:a DOS_PUNTOS EXPRESION:b    {:   RESULT = new StructValue(a, b, aleft, aright);   :}
+	           | ID:a DOS_PUNTOS LLAVE_IZQ LISTA_VALORES_STRUCT:b LLAVE_DER     {:   RESULT = new StructValue(a, b, aleft, aright);   :}
 ;
 
 ASIGNACION ::= ID:a IGUAL EXPRESION:b    {:   RESULT = new VariableAssignment(a, b, aleft, aright);   :}
@@ -268,7 +270,11 @@ ASIGNACION_VECTORES_1D ::= ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER IGUAL EXPR
 ASIGNACION_VECTORES_2D ::= ID:a CORCHETE_IZQ EXPRESION:b CORCHETE_DER CORCHETE_IZQ EXPRESION:c CORCHETE_DER IGUAL EXPRESION:d    {:   RESULT = new VectorAssignment(a, b, c, d, aleft, aright);   :}
 ;
 
-ASIGNACION_STRUCT ::= ID:a PUNTO ID:b IGUAL EXPRESION:c {:   RESULT = new StructAssignment(a, b, c, aleft, aright);   :}
+ASIGNACION_STRUCT ::= ACCESO_STRUCT:a IGUAL EXPRESION:b {:   RESULT = new StructAssignment(a, b, aleft, aright);   :}
+;
+
+ACCESO_STRUCT ::= ACCESO_STRUCT:a PUNTO ID:b            {:   RESULT = a; RESULT.add(b); :}
+                | ID:a PUNTO ID:b                       {:   RESULT = new LinkedList<>(); RESULT.add(a); RESULT.add(b);   :}
 ;
 
 CASTEO ::= PAR_IZQ TIPO:a PAR_DER EXPRESION:b         {:   RESULT = new TypeCasting(a, b, aleft, aright);   :}%prec CASTEO_PREC

@@ -69,7 +69,11 @@ public class Interpreter {
                     ast.addFunction(a);
                 }
                 if (a instanceof StructDeclaration) {
-                    a.interpret(ast, table);
+                    //a.interpret(ast, table);
+                    var res = a.interpret(ast, table);
+                    if (res instanceof Error) {
+                        semanticErrors.add((Error) res);
+                    }
                 }
             }
 
@@ -98,7 +102,7 @@ public class Interpreter {
                     break;
                 }
             }
-            
+
             var resultStartWith = sw.interpret(ast, table);
             if (resultStartWith instanceof Error) {
                 //System.out.println("ERROR AL EJECUTAR START_WITH");
