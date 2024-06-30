@@ -6,6 +6,7 @@ package backend;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import javax.swing.JOptionPane;
 import symbol.Tree;
 
 /**
@@ -32,8 +33,9 @@ public class GenerateGraph {
         }
 
         cadena += "}";
-        System.out.println(cadena);
-        graph("ast_" + fileName +".jpg", cadena);
+        //System.out.println(cadena);
+        graph("ast_" + fileName + ".jpg", cadena);
+        JOptionPane.showMessageDialog(null, "El ast del archivo: " + fileName + " se ha generado exitosamente ", "AST GENERADO", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void graph(String path, String cadena) {
@@ -62,7 +64,6 @@ public class GenerateGraph {
         } catch (Exception ex) {
             System.err.println("Error al generar la imagen para el archivo aux_grafico.dot");
         }
-
     }
 
 }
