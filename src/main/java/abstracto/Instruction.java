@@ -25,6 +25,8 @@ public abstract class Instruction {
     }
 
     public abstract Object interpret(Tree tree, SymbolTable table);
+    
+    public abstract String generateAST(Tree tree, String previous);
 
     @Override
     public String toString() {

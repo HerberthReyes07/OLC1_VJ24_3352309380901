@@ -30,9 +30,9 @@ public class DoWhile extends Instruction {
 
     @Override
     public Object interpret(Tree tree, SymbolTable table) {
-        
+
         var cond = this.condition.interpret(tree, table);
-        
+
         if (cond instanceof Error) {
             return cond;
         }
@@ -40,7 +40,7 @@ public class DoWhile extends Instruction {
         if (this.condition.type.getDataType() != DataType.BOOLEANO) {
             return new Error("SEMANTICO", "Condición en Sentencia While Inválida", this.line, this.column);
         }
-        
+
         return executeDoWhile(tree, table);
     }
 
@@ -81,6 +81,59 @@ public class DoWhile extends Instruction {
         } while ((boolean) this.condition.interpret(tree, table));
 
         return null;
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        //SENTENCIA_DO_WHILE ::= do { INSTRUCCIONES } while ( EXPRESION )
+        String dwpNode = "n" + tree.getCont();
+        String doNode = "n" + tree.getCont();
+        String lbNode = "n" + tree.getCont();
+        String inNode = "n" + tree.getCont();
+        String rbNode = "n" + tree.getCont();
+        String whileNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+        
+        String result = dwpNode + "[label=\"SEN_DO-WHILE\"];\n";
+        result += previous + " -> " + dwpNode + ";\n";
+
+        result += doNode + "[label=\"do\"];\n";
+        result += lbNode + "[label=\"{\"];\n";
+        result += inNode + "[label=\"INSTRUCCIONES_DO-WHILE\"];\n";
+        result += rbNode + "[label=\"}\"];\n";
+        result += whileNode + "[label=\"while\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+        
+        result += dwpNode + " -> " + doNode + ";\n";
+        result += dwpNode + " -> " + lbNode + ";\n";
+        result += dwpNode + " -> " + inNode + ";\n";
+        result += dwpNode + " -> " + rbNode + ";\n";
+        result += dwpNode + " -> " + whileNode + ";\n";
+        result += dwpNode + " -> " + lpNode + ";\n";
+        result += dwpNode + " -> " + expNode + ";\n";
+        result += dwpNode + " -> " + rpNode + ";\n";
+        result += dwpNode + " -> " + pcNode + ";\n";
+        
+        result += this.condition.generateAST(tree, expNode);
+        
+        for (var i : this.instructions) {
+            if (i == null) {
+                continue;
+            }
+            
+            String nodoAux = "n" + tree.getCont();
+            result += inNode + " -> " + nodoAux + ";\n";
+            result += nodoAux + "[label=\"INSTRUCCION\"];\n";
+            result += i.generateAST(tree, nodoAux);
+        }
+        return result;
     }
 
 }

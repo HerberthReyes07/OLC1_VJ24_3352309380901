@@ -39,4 +39,19 @@ public class VariableAccess extends Instruction {
         return id;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+
+        String vaNode = "n" + tree.getCont();
+        String vNode = "n" + tree.getCont();
+
+        String result = previous + " -> " + vaNode + ";\n";
+
+        result += vaNode + "[label=\"ACCESO-VARIABLE\"];\n";
+        result += vNode + "[label=\"" + this.id + "\"];\n";
+
+        result += vaNode + " -> " + vNode + ";\n";
+        return result;
+    }
+
 }

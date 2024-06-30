@@ -125,4 +125,89 @@ public class If extends Instruction {
         return null;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+
+        //SEN_IF -> IF ( EXPRESION ) { INSTRUCCIONES }
+        String ipNode = "n" + tree.getCont();
+        String ifNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String lbIfNode = "n" + tree.getCont();
+        String inIfNode = "n" + tree.getCont();
+        String rbIfNode = "n" + tree.getCont();
+
+        String result = ipNode + "[label=\"SEN_IF\"];\n";
+        result += previous + " -> " + ipNode + ";\n";
+
+        result += ifNode + "[label=\"if\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        result += lbIfNode + "[label=\"{\"];\n";
+        result += inIfNode + "[label=\"INSTRUCCIONES_IF\"];\n";
+        result += rbIfNode + "[label=\"}\"];\n";
+
+        result += ipNode + " -> " + ifNode + ";\n";
+        result += ipNode + " -> " + lpNode + ";\n";
+        result += ipNode + " -> " + expNode + ";\n";
+        result += ipNode + " -> " + rpNode + ";\n";
+        result += ipNode + " -> " + lbIfNode + ";\n";
+        result += ipNode + " -> " + inIfNode + ";\n";
+        result += ipNode + " -> " + rbIfNode + ";\n";
+
+        result += this.condition.generateAST(tree, expNode);
+
+        for (var i : this.instructionsIf) {
+            if (i == null) {
+                continue;
+            }
+            String nodoAux = "n" + tree.getCont();
+            result += inIfNode + " -> " + nodoAux + ";\n";
+            result += nodoAux + "[label=\"INSTRUCCION\"];\n";
+            result += i.generateAST(tree, nodoAux);
+        }
+
+        //SEN_IF -> IF ( EXPRESION ) { INSTRUCCIONES } ELSE { INSTRUCCIONES }
+        if (this.instructionsElse != null) {
+            
+            String elseNode = "n" + tree.getCont();
+            String lbElseNode = "n" + tree.getCont();
+            String inElseNode = "n" + tree.getCont();
+            String rbElseNode = "n" + tree.getCont();
+            
+            result += elseNode + "[label=\"else\"];\n";
+            result += lbElseNode + "[label=\"{\"];\n";
+            result += inElseNode + "[label=\"INSTRUCCIONES_ELSE\"];\n";
+            result += rbElseNode + "[label=\"}\"];\n";
+            
+            result += ipNode + " -> " + elseNode + ";\n";
+            result += ipNode + " -> " + lbElseNode + ";\n";
+            result += ipNode + " -> " + inElseNode + ";\n";
+            result += ipNode + " -> " + rbElseNode + ";\n";
+
+            for (var i : this.instructionsElse) {
+                if (i == null) {
+                    continue;
+                }
+                String nodoAux = "n" + tree.getCont();
+                result += inElseNode + " -> " + nodoAux + ";\n";
+                result += nodoAux + "[label=\"INSTRUCCION\"];\n";
+                result += i.generateAST(tree, nodoAux);
+            }
+        }
+        
+        //SEN_IF -> IF ( EXPRESION ) { INSTRUCCIONES } ELSE IF ( EXPRESION ) { INSTRUCCIONES }
+        if (this.elseIf != null) {
+            String elseNode = "n" + tree.getCont();
+            result += elseNode + "[label=\"else\"];\n";
+            result += ipNode + " -> " + elseNode + ";\n";
+            result += this.elseIf.generateAST(tree, elseNode);
+        }
+        
+        
+        return result;
+    }
+
 }

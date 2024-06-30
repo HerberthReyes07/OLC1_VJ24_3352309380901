@@ -114,4 +114,9 @@ public class Match extends Instruction {
         return null;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        return "";
+    }
+
 }

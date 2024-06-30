@@ -80,4 +80,51 @@ public class While extends Instruction {
         return null;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        //SENTENCIA_WHILE ::= WHILE ( EXPRESION ) { INSTRUCCIONES }
+        
+        String wpNode = "n" + tree.getCont();
+        String whileNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String lbNode = "n" + tree.getCont();
+        String inNode = "n" + tree.getCont();
+        String rbNode = "n" + tree.getCont();
+        
+        String result = wpNode + "[label=\"SEN_WHILE\"];\n";
+        result += previous + " -> " + wpNode + ";\n";
+
+        result += whileNode + "[label=\"while\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        result += lbNode + "[label=\"{\"];\n";
+        result += inNode + "[label=\"INSTRUCCIONES_WHILE\"];\n";
+        result += rbNode + "[label=\"}\"];\n";
+        
+        result += wpNode + " -> " + whileNode + ";\n";
+        result += wpNode + " -> " + lpNode + ";\n";
+        result += wpNode + " -> " + expNode + ";\n";
+        result += wpNode + " -> " + rpNode + ";\n";
+        result += wpNode + " -> " + lbNode + ";\n";
+        result += wpNode + " -> " + inNode + ";\n";
+        result += wpNode + " -> " + rbNode + ";\n";
+        
+        result += this.condition.generateAST(tree, expNode);
+        
+        for (var i : this.instructions) {
+            if (i == null) {
+                continue;
+            }
+            String nodoAux = "n" + tree.getCont();
+            result += inNode + " -> " + nodoAux + ";\n";
+            result += nodoAux + "[label=\"INSTRUCCION\"];\n";
+            result += i.generateAST(tree, nodoAux);
+        }
+        return result;
+    }
+
 }

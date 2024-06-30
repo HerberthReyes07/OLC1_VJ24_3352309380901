@@ -81,7 +81,7 @@ public class Logical extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return (boolean) op1 || (boolean) op2; 
+                        return (boolean) op1 || (boolean) op2;
                     default:
                         return new Error("SEMANTICO", "Operación lógica OR (||) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -132,6 +132,50 @@ public class Logical extends Instruction {
                 return !((boolean) op1);
             default:
                 return new Error("SEMANTICO", "Operación lógica NOT (!) Inválida: no puede negar el tipo " + typeUOp, this.line, this.column);
+        }
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        if (this.operator == Operators.NOT) {
+            String opNode = "n" + tree.getCont();
+            String exp1Node = "n" + tree.getCont();
+            String result = previous + " -> " + opNode + ";\n";
+            result += previous + " ->" + exp1Node + ";\n";
+
+            result += opNode + "[label=\"!\"];\n";
+            result += exp1Node + "[label=\"EXP\"];\n";
+            result += this.uniqueOperand.generateAST(tree, exp1Node);
+            return result;
+        }
+
+        String exp1Node = "n" + tree.getCont();
+        String opNode = "n" + tree.getCont();
+        String exp2Node = "n" + tree.getCont();
+
+        String result = previous + " -> " + exp1Node + ";\n";
+        result += previous + " ->" + opNode + ";\n";
+        result += previous + " ->" + exp2Node + ";\n";
+
+        result += exp1Node + "[label=\"EXPRESION\"];\n";
+        result += opNode + "[label=\" " + getOperator() + " \"];\n";
+        result += exp2Node + "[label=\"EXPRESION\"];\n";
+        result += this.operand1.generateAST(tree, exp1Node);
+        result += this.operand2.generateAST(tree, exp2Node);
+        return result;
+    }
+    
+    private String getOperator() {
+
+        switch (this.operator) {
+            case OR:
+                return "||";
+            case AND:
+                return "&&";
+            case XOR:
+                return "^";
+            default:
+                return "";
         }
     }
 

@@ -328,7 +328,7 @@ public class Relational extends Instruction {
             case BOOLEANO:
                 switch (type2) {
                     case BOOLEANO:
-                        return (boolean) op1 == true && (boolean) op2 == false; 
+                        return (boolean) op1 == true && (boolean) op2 == false;
                     default:
                         return new Error("SEMANTICO", "Operación Relacional mayor que (>) Inválida: no puede comparar los tipos BOOLEANO y " + type2, this.line, this.column);
                 }
@@ -398,6 +398,46 @@ public class Relational extends Instruction {
                 }
             default:
                 return new Error("SEMANTICO", "Operación Relacional mayor igual que (>=) Inválida: no puede comparar los tipos " + type1 + " y " + type2, this.line, this.column);
+        }
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String exp1Node = "n" + tree.getCont();
+        String opNode = "n" + tree.getCont();
+        String exp2Node = "n" + tree.getCont();
+
+        String result = previous + " -> " + exp1Node + ";\n";
+        result += previous + " ->" + opNode + ";\n";
+        result += previous + " ->" + exp2Node + ";\n";
+
+        result += exp1Node + "[label=\"EXPRESION\"];\n";
+        result += opNode + "[label=\" " + getOperator() + " \"];\n";
+        result += exp2Node + "[label=\"EXPRESION\"];\n";
+        result += this.operand1.generateAST(tree, exp1Node);
+        result += this.operand2.generateAST(tree, exp2Node);
+        return result;
+    }
+    
+    private String getOperator() {
+
+        switch (this.operator) {
+            case IGUALACION:
+                return "==";
+            case DIFERENCIACION:
+                return "!=";
+            case MENOR_QUE:
+                return "<";
+            case MENOR_IGUAL:
+                return "<=";
+            case MAYOR_QUE:
+                return ">";
+            case MAYOR_IGUAL:
+                return ">=";
+            default:
+                return "";
+
         }
     }
 

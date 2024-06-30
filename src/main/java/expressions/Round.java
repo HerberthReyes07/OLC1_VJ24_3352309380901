@@ -43,4 +43,32 @@ public class Round extends Instruction {
         return Math.round((double) expressionToRound);
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        //ROUND ::= round ( EXPRESION )
+        
+        String rndpNode = "n" + tree.getCont();
+        String roundNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        
+        String result = rndpNode + "[label=\"FUNC_ROUND\"];\n";
+        result += previous + " -> " + rndpNode + ";\n";
+        
+        result += roundNode + "[label=\"round\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        
+        result += rndpNode + " -> " + roundNode + ";\n";
+        result += rndpNode + " -> " + lpNode + ";\n";
+        result += rndpNode + " -> " + expNode + ";\n";
+        result += rndpNode + " -> " + rpNode + ";\n";
+        
+        result += this.expression.generateAST(tree, expNode);
+        
+        return result;
+    }
+
 }

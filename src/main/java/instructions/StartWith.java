@@ -69,4 +69,57 @@ public class StartWith extends Instruction {
         return null;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String swpNode = "n" + tree.getCont();
+        String startWithNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String prmNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+        
+        String result = swpNode + "[label=\"FUNC_START_WITH\"];\n";
+        result += previous + " -> " + swpNode + ";\n";
+        
+        result += startWithNode + "[label=\"start_with\"];\n";
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        if (!parameters.isEmpty()) {
+            result += prmNode + "[label=\"PARAMS\"];\n";
+        }
+        result += rpNode + "[label=\")\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+        
+        result += swpNode + " -> " + startWithNode + ";\n";
+        result += swpNode + " -> " + idNode + ";\n";
+        result += swpNode + " -> " + lpNode + ";\n";
+        if (!parameters.isEmpty()) {
+            result += swpNode + " -> " + prmNode + ";\n";
+        }
+        result += swpNode + " -> " + rpNode + ";\n";
+        result += swpNode + " -> " + pcNode + ";\n";
+        
+        int cont = 0;
+        for (var i : this.parameters) {
+            if (i == null) {
+                continue;
+            }
+            String nodoAux = "n" + tree.getCont();
+            result += prmNode + " -> " + nodoAux + ";\n";
+            result += nodoAux + "[label=\"EXPRESION\"];\n";
+            result += i.generateAST(tree, nodoAux);
+            
+            cont++;
+            if (cont + 1 <= this.parameters.size()) {
+                String auxCmNode = "n" + tree.getCont();
+                result += prmNode + " -> " + auxCmNode + ";\n";
+                result += auxCmNode + "[label=\",\"];\n";
+            }
+        }
+        
+        return result;
+    }
+
 }

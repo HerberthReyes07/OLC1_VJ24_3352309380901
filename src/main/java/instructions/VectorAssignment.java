@@ -53,7 +53,7 @@ public class VectorAssignment extends Instruction {
             return new Error("SEMANTICO", "Acceso Inválido: No puede acceder a una posición del vector inexistente",
                     this.line, this.column);
         }
-        
+
         if (!variable.isMutable()) {
             return new Error("SEMANTICO", "Asignación Inválida: No puede cambiar el valor de una variable declarada como CONST",
                     this.line, this.column);
@@ -81,7 +81,7 @@ public class VectorAssignment extends Instruction {
             variable.setValue(val);
             return null;
         }
-        
+
         /**/
         var acc2 = this.access2.interpret(tree, table);
 
@@ -103,10 +103,73 @@ public class VectorAssignment extends Instruction {
             return new Error("SEMANTICO", "Acceso Inválido: No puede acceder a una posición del vector inexistente",
                     this.line, this.column);
         }
-        
+
         val.get(pos).set(pos2, newValue);
         variable.setValue(val);
         return null;
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        /*
+            ASIGNACION_VECTORES_1D ::= ID:a [ EXPRESION:b ] = EXPRESION:c
+            ASIGNACION_VECTORES_2D ::= ID:a [ EXPRESION:b ] [ EXPRESION:c ] = EXPRESION:d
+         */
+
+        String vapNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String ciNode = "n" + tree.getCont();
+        String acc1Node = "n" + tree.getCont();
+        String cdNode = "n" + tree.getCont();
+
+        String ci2Node = "n" + tree.getCont();
+        String acc2Node = "n" + tree.getCont();
+        String cd2Node = "n" + tree.getCont();
+
+        String igNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+
+        String result = vapNode + "[label=\"ASIGNACION-VECTOR\"];\n";
+        result += previous + " -> " + vapNode + ";\n";
+
+        result += idNode + "[label=\"" + this.id + "\"];\n";
+        result += ciNode + "[label=\"[\"];\n";
+        result += acc1Node + "[label=\"EXPRESION\"];\n";
+        result += cdNode + "[label=\"]\"];\n";
+
+        if (access2 != null) {
+            result += ci2Node + "[label=\"[\"];\n";
+            result += acc2Node + "[label=\"EXPRESION\"];\n";
+            result += cd2Node + "[label=\"]\"];\n";
+        }
+
+        result += igNode + "[label=\"=\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+
+        result += vapNode + " -> " + idNode + ";\n";
+        result += vapNode + " -> " + ciNode + ";\n";
+        result += vapNode + " -> " + acc1Node + ";\n";
+        result += vapNode + " -> " + cdNode + ";\n";
+
+        if (access2 != null) {
+            result += vapNode + " -> " + ci2Node + ";\n";
+            result += vapNode + " -> " + acc2Node + ";\n";
+            result += vapNode + " -> " + cd2Node + ";\n";
+        }
+
+        result += vapNode + " -> " + igNode + ";\n";
+        result += vapNode + " -> " + expNode + ";\n";
+        result += vapNode + " -> " + pcNode + ";\n";
+
+        result += this.access.generateAST(tree, acc1Node);
+        if (access2 != null) {
+            result += this.access2.generateAST(tree, acc2Node);
+        }
+
+        result += this.value.generateAST(tree, expNode);
+        return result;
     }
 
 }

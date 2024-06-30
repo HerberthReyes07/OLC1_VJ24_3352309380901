@@ -20,7 +20,7 @@ import symbol.MutabilityType;
  * @author herberthreyes
  */
 public class MethodCall extends Instruction {
-    
+
     private String id;
     private LinkedList<Instruction> parameters;
 
@@ -32,12 +32,12 @@ public class MethodCall extends Instruction {
 
     @Override
     public Object interpret(Tree tree, SymbolTable table) {
-        
+
         var search = tree.getFunction(id);
         if (search == null) {
             return new Error("SEMANTICO", "Llamada a método: " + this.id + " Inválida. No puede llamar a un método inexistente", this.line, this.column);
         }
-        
+
         if (search instanceof Method) {
             var method = (Method) search;
 
@@ -60,20 +60,20 @@ public class MethodCall extends Instruction {
                 if (resultDeclaration instanceof Error) {
                     return resultDeclaration;
                 }
-                
+
                 var interpretedValue = value.interpret(tree, table);
                 if (interpretedValue instanceof Error) {
                     return resultDeclaration;
                 }
-                
+
                 var variable = newTable.getVariable(idMethod);
                 if (variable == null) {
-                    return new Error("SEMANTICO", "Llamada a método: " + this.id + " Inválida. Error en la declaración parámetros",this.line, this.column);
+                    return new Error("SEMANTICO", "Llamada a método: " + this.id + " Inválida. Error en la declaración parámetros", this.line, this.column);
                 }
-                
+
                 if (variable.getType().getDataType() != value.type.getDataType()) {
-                    return new Error("SEMANTICO", "Llamada a método: " + this.id + " Inválida. El parámetro" + variable.getId() +" es del tipo: " + variable.getType().getDataType()
-                            + ", no puede asignarle un valor del tipo: " + value.type.getDataType(),this.line, this.column);
+                    return new Error("SEMANTICO", "Llamada a método: " + this.id + " Inválida. El parámetro" + variable.getId() + " es del tipo: " + variable.getType().getDataType()
+                            + ", no puede asignarle un valor del tipo: " + value.type.getDataType(), this.line, this.column);
                 }
 
                 variable.setValue(interpretedValue);
@@ -88,7 +88,53 @@ public class MethodCall extends Instruction {
 
         return null;
     }
-    
-    
-    
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String mcpNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String prmNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        
+        String result = mcpNode + "[label=\"LLAMADA_METODO\"];\n";
+        result += previous + " -> " + mcpNode + ";\n";
+        
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        if (!parameters.isEmpty()) {
+            result += prmNode + "[label=\"PARAMS\"];\n";
+        }
+        result += rpNode + "[label=\")\"];\n";
+        
+        result += mcpNode + " -> " + idNode + ";\n";
+        result += mcpNode + " -> " + lpNode + ";\n";
+        if (!parameters.isEmpty()) {
+            result += mcpNode + " -> " + prmNode + ";\n";
+        }
+        result += mcpNode + " -> " + rpNode + ";\n";
+        
+        int cont = 0;
+        for (var i : this.parameters) {
+            if (i == null) {
+                continue;
+            }
+            String nodoAux = "n" + tree.getCont();
+            result += prmNode + " -> " + nodoAux + ";\n";
+            result += nodoAux + "[label=\"EXPRESION\"];\n";
+            result += i.generateAST(tree, nodoAux);
+            
+            cont++;
+            if (cont + 1 <= this.parameters.size()) {
+                String auxCmNode = "n" + tree.getCont();
+                result += prmNode + " -> " + auxCmNode + ";\n";
+                result += auxCmNode + "[label=\",\"];\n";
+            }
+        }
+        
+        
+        return result;
+    }
+
 }

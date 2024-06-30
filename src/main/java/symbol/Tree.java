@@ -21,6 +21,7 @@ public class Tree {
     private LinkedList<SymbolTable> tables;
     private LinkedList<Struct> structs;
     private LinkedList<Instruction> functions;
+    private int cont;
 
     public Tree(LinkedList<Instruction> instructions) {
         this.instructions = instructions;
@@ -30,6 +31,7 @@ public class Tree {
         this.tables = new LinkedList<>();
         this.structs = new LinkedList<>();
         this.functions = new LinkedList<>();
+        this.cont = 0;
     }
 
     public void Print(String value) {
@@ -122,5 +124,10 @@ public class Tree {
             }
         }
         return null;
+    }
+    
+    public int getCont(){
+        this.cont++;
+        return this.cont;
     }
 }

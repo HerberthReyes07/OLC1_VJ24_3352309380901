@@ -53,4 +53,39 @@ public class Append extends Instruction {
         return null;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        //AGREGAR_VALOR_LISTA ::= ID:a . append ( EXPRESION:b );
+        String apNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String pNode = "n" + tree.getCont();
+        String appendNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+
+        String result = apNode + "[label=\"LIST-APPEND\"];\n";
+        result += previous + " -> " + apNode + ";\n";
+
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += pNode + "[label=\".\"];\n";
+        result += appendNode + "[label=\"append\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+
+        result += apNode + " -> " + idNode + ";\n";
+        result += apNode + " -> " + pNode + ";\n";
+        result += apNode + " -> " + appendNode + ";\n";
+        result += apNode + " -> " + lpNode + ";\n";
+        result += apNode + " -> " + expNode + ";\n";
+        result += apNode + " -> " + rpNode + ";\n";
+        result += apNode + " -> " + pcNode + ";\n";
+        
+        result += this.expression.generateAST(tree, expNode);
+        return result;
+    }
+
 }

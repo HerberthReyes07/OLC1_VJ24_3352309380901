@@ -256,7 +256,7 @@ public class Arithmetic extends Instruction {
 
         DataType type1 = this.operand1.type.getDataType();
         DataType type2 = this.operand2.type.getDataType();
-        
+
         if (type2 == DataType.ENTERO) {
             if ((int) op2 == 0) {
                 return new Error("SEMANTICO", "División Inválida: No puede dividir entre 0", this.line, this.column);
@@ -266,7 +266,7 @@ public class Arithmetic extends Instruction {
                 return new Error("SEMANTICO", "División Inválida: No puede dividir entre 0", this.line, this.column);
             }
         }
-        
+
         switch (type1) {
             case ENTERO:
                 switch (type2) {
@@ -399,6 +399,57 @@ public class Arithmetic extends Instruction {
                 return (double) op1 * -1;
             default:
                 return new Error("SEMANTICO", "Negación Unaria Inválida: No puede obtener la Negación Unaria del tipo " + opU, this.line, this.column);
+        }
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        if (this.operator == Operators.NEGACION) {
+            String opNode = "n" + tree.getCont();
+            String exp1Node = "n" + tree.getCont();
+            String result = previous + " -> " + opNode + ";\n";
+            result += previous + " ->" + exp1Node + ";\n";
+            
+            result += opNode + "[label=\"-\"];\n";
+            result += exp1Node + "[label=\"EXP\"];\n";
+            result += this.uniqueOperand.generateAST(tree, exp1Node);
+            return result;
+        }
+
+        String exp1Node = "n" + tree.getCont();
+        String opNode = "n" + tree.getCont();
+        String exp2Node = "n" + tree.getCont();
+
+        String result = previous + " -> " + exp1Node + ";\n";
+        result += previous + " ->" + opNode + ";\n";
+        result += previous + " ->" + exp2Node + ";\n";
+
+        result += exp1Node + "[label=\"EXPRESION\"];\n";
+        result += opNode + "[label=\" " + getOperator() + " \"];\n";
+        result += exp2Node + "[label=\"EXPRESION\"];\n";
+        result += this.operand1.generateAST(tree, exp1Node);
+        result += this.operand2.generateAST(tree, exp2Node);
+        return result;
+    }
+
+    private String getOperator() {
+
+        switch (this.operator) {
+            case SUMA:
+                return "+";
+            case RESTA:
+                return "-";
+            case MULTIPLICACION:
+                return "*";
+            case DIVISION:
+                return "/";
+            case MODULO:
+                return "%";
+            case POTENCIA:
+                return "**";
+            default:
+                return "";
         }
     }
 }

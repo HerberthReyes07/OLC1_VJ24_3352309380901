@@ -76,7 +76,7 @@ public class StructAssignment extends Instruction {
                     if (idList.size() != (cont + 1)) {
                         continue;
                     }
-                    
+
                     var newValue = this.expression.interpret(tree, table);
                     if (newValue instanceof Error) {
                         return newValue;
@@ -104,6 +104,58 @@ public class StructAssignment extends Instruction {
             cont++;
         }
         return null;
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+
+        String sapNode = "n" + tree.getCont();
+        String igNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+
+        String result = sapNode + "[label=\"ASIGNACION-STRUCT\"];\n";
+        result += previous + " -> " + sapNode + ";\n";
+
+        int cont = 0;
+        for (var i : this.idList) {
+            if (i == null) {
+                continue;
+            }
+            if (cont == 0) {
+                String nodoAux = "n" + tree.getCont();
+                result += sapNode + " -> " + nodoAux + ";\n";
+                result += nodoAux + "[label=\"" + idList.get(cont) + "\"];\n";
+            } else {
+                String nodoAux = "n" + tree.getCont();
+                String nodoAux2 = "n" + tree.getCont();
+
+                result += sapNode + " -> " + nodoAux + ";\n";
+                result += nodoAux + " -> " + nodoAux2 + ";\n";
+
+                result += nodoAux + "[label=\"CAMPO_STRUCT\"];\n";
+                result += nodoAux2 + "[label=\"" + idList.get(cont) + "\"];\n";
+            }
+
+            cont++;
+            if (cont + 1 <= this.idList.size()) {
+                String auxCmNode = "n" + tree.getCont();
+                result += sapNode + " -> " + auxCmNode + ";\n";
+                result += auxCmNode + "[label=\".\"];\n";
+            }
+
+        }
+        
+        result += igNode + "[label=\"=\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+
+        result += sapNode + " -> " + igNode + ";\n";
+        result += sapNode + " -> " + expNode + ";\n";
+        result += sapNode + " -> " + pcNode + ";\n";
+
+        result += this.expression.generateAST(tree, expNode);
+        return result;
     }
 
 }

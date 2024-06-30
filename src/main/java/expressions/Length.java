@@ -45,4 +45,32 @@ public class Length extends Instruction {
         return expressionToConvert.toString().length();
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String lgtpNode = "n" + tree.getCont();
+        String lengthNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        
+        String result = lgtpNode + "[label=\"FUNC_LENGTH\"];\n";
+        result += previous + " -> " + lgtpNode + ";\n";
+        
+        result += lengthNode + "[label=\"length\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        
+        result += lgtpNode + " -> " + lengthNode + ";\n";
+        result += lgtpNode + " -> " + lpNode + ";\n";
+        result += lgtpNode + " -> " + expNode + ";\n";
+        result += lgtpNode + " -> " + rpNode + ";\n";
+        
+        result += this.expression.generateAST(tree, expNode);
+        
+        return result;
+
+    }
+
 }

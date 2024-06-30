@@ -107,4 +107,75 @@ public class StructInstantiation extends Instruction {
         this.flag = flag;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String sipNode = "n" + tree.getCont();
+        String mtpNode = "n" + tree.getCont();
+        String mtNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String tpNode = "n" + tree.getCont();
+        String snNode = "n" + tree.getCont();
+        String igNode = "n" + tree.getCont();
+        String lbNode = "n" + tree.getCont();
+        String vNode = "n" + tree.getCont();
+        String rbNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+        
+        
+        String result = sipNode + "[label=\"INSTANCIACION-STRUCT\"];\n";
+        result += previous + " -> " + sipNode + ";\n";
+
+        result += mtpNode + "[label=\"MUTABILIDAD\"];\n";
+        result += mtNode + "[label=\" " + getMutabilityType() + "\"];\n";
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += tpNode + "[label=\":\"];\n";
+        result += snNode + "[label=\" " + this.structName + "\"];\n";
+        result += igNode + "[label=\"=\"];\n";
+        result += lbNode + "[label=\"{\"];\n";
+        result += vNode + "[label=\"VALORES_STRUCT\"];\n";
+        result += rbNode + "[label=\"}\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+        
+        result += sipNode + " -> " + mtpNode + ";\n";
+        result += mtpNode + " -> " + mtNode + ";\n";
+        result += sipNode + " -> " + idNode + ";\n";
+        result += sipNode + " -> " + tpNode + ";\n";
+        result += sipNode + " -> " + snNode + ";\n";
+        result += sipNode + " -> " + igNode + ";\n";
+        result += sipNode + " -> " + lbNode + ";\n";
+        result += sipNode + " -> " + vNode + ";\n";
+        result += sipNode + " -> " + rbNode + ";\n";
+        result += sipNode + " -> " + pcNode + ";\n";
+        
+        int cont = 0;
+        for (var i : this.values) {
+            if (i == null) {
+                continue;
+            }
+
+            result += i.generateAST(tree, vNode);
+            cont++;
+            if (cont + 1 <= this.values.size()) {
+                String auxCmNode = "n" + tree.getCont();
+                result += vNode + " -> " + auxCmNode + ";\n";
+                result += auxCmNode + "[label=\",\"];\n";
+            }
+        }
+        
+        return result;
+    }
+    
+    private String getMutabilityType() {
+
+        switch (this.mutabilityType) {
+            case VAR:
+                return "var";
+            case CONST:
+                return "const";
+            default:
+                return "";
+        }
+    }
+
 }

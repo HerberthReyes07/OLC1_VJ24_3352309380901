@@ -24,4 +24,22 @@ public class Continue extends Instruction {
     public Object interpret(Tree tree, SymbolTable table) {
         return null;
     }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String cpNode = "n" + tree.getCont();
+        String cNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+
+        String result = previous + " -> " + cpNode + ";\n";
+
+        result += cpNode + "[label=\"SEN_CONTINUE\"];\n";
+        result += cNode + "[label=\"continue\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+
+        result += cpNode + " -> " + cNode + ";\n";
+        result += cpNode + " -> " + pcNode + ";\n";
+        return result;
+    }
 }

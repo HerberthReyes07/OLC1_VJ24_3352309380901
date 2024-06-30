@@ -57,4 +57,38 @@ public class Remove extends Instruction {
         return aux;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        //QUITAR_VALOR_LISTA ::= ID:a . remove ( EXPRESION:b )
+        
+        String rmvpNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String pNode = "n" + tree.getCont();
+        String removeNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        
+        String result = rmvpNode + "[label=\"LIST-REMOVE\"];\n";
+        result += previous + " -> " + rmvpNode + ";\n";
+
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += pNode + "[label=\".\"];\n";
+        result += removeNode + "[label=\"remove\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+
+        result += rmvpNode + " -> " + idNode + ";\n";
+        result += rmvpNode + " -> " + pNode + ";\n";
+        result += rmvpNode + " -> " + removeNode + ";\n";
+        result += rmvpNode + " -> " + lpNode + ";\n";
+        result += rmvpNode + " -> " + expNode + ";\n";
+        result += rmvpNode + " -> " + rpNode + ";\n";
+        
+        result += this.expression.generateAST(tree, expNode);
+        return result;
+    }
+
 }

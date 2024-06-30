@@ -103,5 +103,69 @@ public class StructValue extends Instruction {
     public void setAuxStruct(Struct auxStruct) {
         this.auxStruct = auxStruct;
     }
-    
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+
+        /*
+            VALOR_STRUCT ::= ID:a : EXPRESION:b                     <-
+                           | ID:a : { LISTA_VALORES_STRUCT:b }      <-
+
+         */
+        String svpNode = "n" + tree.getCont();
+        String fnNode = "n" + tree.getCont();
+        String fNode = "n" + tree.getCont();
+        String tpNode = "n" + tree.getCont();
+
+        String expNode = "n" + tree.getCont();
+
+        String lbNode = "n" + tree.getCont();
+        String vNode = "n" + tree.getCont();
+        String rbNode = "n" + tree.getCont();;
+
+        String result = svpNode + "[label=\"VALOR_STRUCT\"];\n";
+        result += previous + " -> " + svpNode + ";\n";
+
+        result += fnNode + "[label=\"CAMPO_STRUCT\"];\n";
+        result += fNode + "[label=\" " + this.field + "\"];\n";
+        result += tpNode + "[label=\":\"];\n";
+
+        if (value != null) {
+            result += expNode + "[label=\"EXPRESION\"];\n";
+        } else {
+            result += lbNode + "[label=\"{\"];\n";
+            result += vNode + "[label=\"VALORES_STRUCT\"];\n";
+            result += rbNode + "[label=\"}\"];\n";
+        }
+
+        result += svpNode + " -> " + fnNode + ";\n";
+        result += fnNode + " -> " + fNode + ";\n";
+        result += svpNode + " -> " + tpNode + ";\n";
+
+        if (value != null) {
+            result += svpNode + " -> " + expNode + ";\n";
+            result += this.value.generateAST(tree, expNode);
+        } else {
+            result += svpNode + " -> " + lbNode + ";\n";
+            result += svpNode + " -> " + vNode + ";\n";
+            result += svpNode + " -> " + rbNode + ";\n";
+            int cont = 0;
+            for (var i : this.values) {
+                if (i == null) {
+                    continue;
+                }
+
+                result += i.generateAST(tree, vNode);
+                cont++;
+                if (cont + 1 <= this.values.size()) {
+                    String auxCmNode = "n" + tree.getCont();
+                    result += vNode + " -> " + auxCmNode + ";\n";
+                    result += auxCmNode + "[label=\",\"];\n";
+                }
+            }
+        }
+
+        return result;
+    }
+
 }

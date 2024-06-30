@@ -5,6 +5,7 @@
 package frontend;
 
 import backend.FileController;
+import backend.GenerateGraph;
 import backend.Interpreter;
 import symbol.SymbolTable;
 import java.io.FileNotFoundException;
@@ -25,6 +26,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 import exceptions.Error;
+import symbol.Tree;
 
 /**
  *
@@ -35,6 +37,8 @@ public class MainInterface extends javax.swing.JFrame {
     private FileController fileController = new FileController();
     private JTextArea currentTextArea;
     private ArrayList<String> outputs = new ArrayList<>();
+    //private ArrayList<String> asts = new ArrayList<>();
+    private ArrayList<Tree> asts = new ArrayList<>();
     private ArrayList<LinkedList<Error>> arrayLexErrors = new ArrayList<>();
     private ArrayList<LinkedList<Error>> arraySyntaxErrors = new ArrayList<>();
     private ArrayList<LinkedList<Error>> arraySemanticErrors = new ArrayList<>();
@@ -172,6 +176,11 @@ public class MainInterface extends javax.swing.JFrame {
         jMenu4.add(jMenuItem5);
 
         jMenuItem6.setText("Generar AST");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem6);
 
         jMenuItem7.setText("Tabla de Símbolos");
@@ -263,6 +272,7 @@ public class MainInterface extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (jTabbedPane1.getTabCount() != 0) {
             outputs.remove(jTabbedPane1.getSelectedIndex());
+            asts.remove(jTabbedPane1.getSelectedIndex());
             arrayLexErrors.remove(jTabbedPane1.getSelectedIndex());
             arraySyntaxErrors.remove(jTabbedPane1.getSelectedIndex());
             arraySemanticErrors.remove(jTabbedPane1.getSelectedIndex());
@@ -365,6 +375,8 @@ public class MainInterface extends javax.swing.JFrame {
             }
 
             outputs.set(jTabbedPane1.getSelectedIndex(), output);
+            asts.set(jTabbedPane1.getSelectedIndex(), interpreter.getAstGenerated());
+
             jTextArea2.setText(outputs.get(jTabbedPane1.getSelectedIndex()));
 
             arraySymbolTables.set(jTabbedPane1.getSelectedIndex(), this.symbolTable);
@@ -375,6 +387,18 @@ public class MainInterface extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No hay ningún archivo para ser ejecutado", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+        if (!this.asts.isEmpty()) {
+            if (this.asts.get(jTabbedPane1.getSelectedIndex()) != null) {
+
+                GenerateGraph generateGraph = new GenerateGraph(this.asts.get(jTabbedPane1.getSelectedIndex()), jTabbedPane1.getTitleAt(jTabbedPane1.getSelectedIndex()));
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No hay ningún ast para mostrar", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void textAreaCaretUpdate(JTextArea textArea) {
         int linea = 0;
@@ -408,6 +432,8 @@ public class MainInterface extends javax.swing.JFrame {
     private void addNewTab(String name, String input) {
 
         outputs.add("");
+        //asts.add("");
+        asts.add(new Tree(null));
         arrayLexErrors.add(new LinkedList<>());
         arraySyntaxErrors.add(new LinkedList<>());
         arraySemanticErrors.add(new LinkedList<>());

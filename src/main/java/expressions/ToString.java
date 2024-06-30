@@ -35,7 +35,6 @@ public class ToString extends Instruction {
         /*if (expression.type.getDataType() == DataType.CADENA) {
             return new Error("SEMANTICO", "Uso de función ToString Inválido. No puede convertir un tipo de dato CADENA a CADENA", this.line, this.column);
         }*/
-
         if (expression instanceof VariableAccess) {
             var va  = (VariableAccess) expression;
             if (expression.type.getDataType() == DataType.STRUCT) {
@@ -46,6 +45,33 @@ public class ToString extends Instruction {
         }
 
         return expressionToConvert.toString();
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String tspNode = "n" + tree.getCont();
+        String toStringNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+
+        String result = tspNode + "[label=\"FUNC_TO_STRING\"];\n";
+        result += previous + " -> " + tspNode + ";\n";
+
+        result += toStringNode + "[label=\"toString\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+
+        result += tspNode + " -> " + toStringNode + ";\n";
+        result += tspNode + " -> " + lpNode + ";\n";
+        result += tspNode + " -> " + expNode + ";\n";
+        result += tspNode + " -> " + rpNode + ";\n";
+
+        result += this.expression.generateAST(tree, expNode);
+
+        return result;
     }
 
 }

@@ -61,7 +61,7 @@ public class TypeCasting extends Instruction {
                 return new Error("SEMANTICO", "Casteo Inválido: de tipo " + dataType + " a tipo ENTERO", this.line, this.column);
         }
     }
-    
+
     private Object castToDouble(Object expressionToCast) {
 
         DataType dataType = this.expression.type.getDataType();
@@ -77,7 +77,7 @@ public class TypeCasting extends Instruction {
                 return new Error("SEMANTICO", "Casteo Inválido: de tipo " + dataType + " a tipo DECIMAL", this.line, this.column);
         }
     }
-    
+
     private Object castToChar(Object expressionToCast) {
 
         DataType dataType = this.expression.type.getDataType();
@@ -91,4 +91,50 @@ public class TypeCasting extends Instruction {
         }
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        //CASTEO ::= ( TIPO ) EXPRESION
+
+        String cpNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String tyNode = "n" + tree.getCont();
+        String auxTyNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+
+        String result = previous + " -> " + cpNode + ";\n";
+        result += cpNode + " -> " + lpNode + ";\n";
+        result += cpNode + " ->" + tyNode + ";\n";
+        result += tyNode + " -> " + auxTyNode + ";\n";
+        result += cpNode + " ->" + rpNode + ";\n";
+        result += cpNode + " ->" + expNode + ";\n";
+
+        result += cpNode + "[label=\"CASTEO\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += tyNode + "[label=\"TIPO\"];\n";
+        result += auxTyNode + "[label=\" " + getDataType() + "\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+
+        result += this.expression.generateAST(tree, expNode);
+        return result;
+    }
+
+    private String getDataType() {
+
+        switch (this.type.getDataType()) {
+            case ENTERO:
+                return "int";
+            case DECIMAL:
+                return "double";
+            case BOOLEANO:
+                return "bool";
+            case CARACTER:
+                return "char";
+            case CADENA:
+                return "String";
+            default:
+                return "";
+        }
+    }
 }

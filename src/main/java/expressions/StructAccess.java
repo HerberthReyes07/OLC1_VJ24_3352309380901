@@ -35,7 +35,7 @@ public class StructAccess extends Instruction {
         HashMap<String, Object> val = null;
         Symbol variable = null;
         Struct currentStruct = null;
-        
+
         for (var id : idList) {
 
             //System.out.println("cont: " + cont + ", id: " + id);
@@ -57,10 +57,10 @@ public class StructAccess extends Instruction {
                 if (aux == null) {
                     return new Error("SEMANTICO", "Acceso a Struct Inválido: El campo: " + id.toLowerCase() + " no existe en la instancia: " + this.idList.get(0), this.line, this.column);
                 }
-                
+
                 HashMap<String, DataType> dataType = currentStruct.getValuesTypes();
                 var aux2 = dataType.get(id.toLowerCase());
-                
+
                 if (aux2 != DataType.STRUCT) {
                     if (idList.size() != (cont + 1)) {
                         continue;
@@ -76,6 +76,47 @@ public class StructAccess extends Instruction {
             cont++;
         }
         return null;
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+
+        //ID:a . ID:b
+        String sapNode = "n" + tree.getCont();
+
+        String result = sapNode + "[label=\"ACCESO-STRUCT\"];\n";
+        result += previous + " -> " + sapNode + ";\n";
+
+        int cont = 0;
+        for (var i : this.idList) {
+            if (i == null) {
+                continue;
+            }
+            if (cont == 0) {
+                String nodoAux = "n" + tree.getCont();
+                result += sapNode + " -> " + nodoAux + ";\n";
+                result += nodoAux + "[label=\"" + idList.get(cont) + "\"];\n";
+            } else {
+                String nodoAux = "n" + tree.getCont();
+                String nodoAux2 = "n" + tree.getCont();
+
+                result += sapNode + " -> " + nodoAux + ";\n";
+                result += nodoAux + " -> " + nodoAux2 + ";\n";
+
+                result += nodoAux + "[label=\"CAMPO_STRUCT\"];\n";
+                result += nodoAux2 + "[label=\"" + idList.get(cont) + "\"];\n";
+            }
+
+            cont++;
+            if (cont + 1 <= this.idList.size()) {
+                String auxCmNode = "n" + tree.getCont();
+                result += sapNode + " -> " + auxCmNode + ";\n";
+                result += auxCmNode + "[label=\".\"];\n";
+            }
+
+        }
+        return result;
+
     }
 
 }

@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import symbol.SymbolTable;
 import symbol.Tree;
 import exceptions.Error;
+import instructions.Append;
 import instructions.Declaration;
 import instructions.DynamicListDeclaration;
 import instructions.Method;
@@ -23,7 +24,6 @@ import instructions.StructInstantiation;
 import instructions.VariableAssignment;
 import instructions.VectorAssignment;
 import instructions.VectorDeclaration;
-import symbol.Struct;
 
 /**
  *
@@ -33,6 +33,8 @@ public class Interpreter {
 
     private String code;
     private String console;
+    //private String astGenerated = "";
+    private Tree astGenerated;
     private LinkedList<Error> lexErrors;
     private LinkedList<Error> syntaxErrors;
     private LinkedList<Error> semanticErrors;
@@ -84,7 +86,7 @@ public class Interpreter {
                 if (a instanceof Declaration || a instanceof VariableAssignment
                         || a instanceof StructInstantiation || a instanceof StructAssignment
                         || a instanceof VectorDeclaration || a instanceof VectorAssignment
-                        || a instanceof DynamicListDeclaration) {
+                        || a instanceof DynamicListDeclaration || a instanceof Append) {
                     var res = a.interpret(ast, table);
                     if (res instanceof Error) {
                         semanticErrors.add((Error) res);
@@ -108,7 +110,9 @@ public class Interpreter {
                 //System.out.println("ERROR AL EJECUTAR START_WITH");
                 semanticErrors.add((Error) resultStartWith);
             }
-
+            
+            this.astGenerated = ast;
+            
             this.symbolTable = new LinkedList<>();
             symbolTable.add(table);
             symbolTable.addAll(ast.getTables());
@@ -136,6 +140,14 @@ public class Interpreter {
         return console;
     }
 
+    /*public String getAstGenerated() {
+        return astGenerated;
+    }*/
+
+    public Tree getAstGenerated() {
+        return astGenerated;
+    }
+    
     public LinkedList<Error> getLexErrors() {
         return lexErrors;
     }

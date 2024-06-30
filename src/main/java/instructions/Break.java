@@ -24,5 +24,23 @@ public class Break extends Instruction {
     public Object interpret(Tree tree, SymbolTable table) {
         return null;
     }
-    
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String bpNode = "n" + tree.getCont();
+        String bNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+
+        String result = previous + " -> " + bpNode + ";\n";
+
+        result += bpNode + "[label=\"SEN_BREAK\"];\n";
+        result += bNode + "[label=\"break\"];\n";
+        result += pcNode + "[label=\";\"];\n";
+
+        result += bpNode + " -> " + bNode + ";\n";
+        result += bpNode + " -> " + pcNode + ";\n";
+        return result;
+    }
+
 }

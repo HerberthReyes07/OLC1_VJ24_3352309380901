@@ -79,4 +79,108 @@ public class Method extends Instruction {
         return null;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+
+        //METODO: TIPO nombre ( PARAMS ) { instrucciones }
+        String mpNode = "n" + tree.getCont();
+        String tyNode = "n" + tree.getCont();
+        String auxMTyNode = "n" + tree.getCont();
+        String nmNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String prmNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+        String lbNode = "n" + tree.getCont();
+        String inNode = "n" + tree.getCont();
+        String rbNode = "n" + tree.getCont();
+
+        String result = mpNode + "[label=\"METODO\"];\n";
+        result += previous + " -> " + mpNode + ";\n";
+
+        result += tyNode + "[label=\"TIPO\"];\n";
+        result += auxMTyNode + "[label=\" " + getDataType(this.type.getDataType()) + "\"];\n";
+        result += nmNode + "[label=\" " + this.id + "\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        if (!parameters.isEmpty()) {
+            result += prmNode + "[label=\"PARAMS\"];\n";
+        }
+        result += rpNode + "[label=\")\"];\n";
+        result += lbNode + "[label=\"{\"];\n";
+        result += inNode + "[label=\"INSTRUCCIONES_METODO\"];\n";
+        result += rbNode + "[label=\"}\"];\n";
+
+        result += mpNode + " -> " + tyNode + ";\n";
+        result += tyNode + " -> " + auxMTyNode + ";\n";
+        result += mpNode + " -> " + nmNode + ";\n";
+        result += mpNode + " -> " + lpNode + ";\n";
+        if (!parameters.isEmpty()) {
+            result += mpNode + " -> " + prmNode + ";\n";
+        }
+        result += mpNode + " -> " + rpNode + ";\n";
+        result += mpNode + " -> " + lbNode + ";\n";
+        result += mpNode + " -> " + inNode + ";\n";
+        result += mpNode + " -> " + rbNode + ";\n";
+
+        int cont = 0;
+        for (var i : this.parameters) {
+            if (i == null) {
+                continue;
+            }
+
+            var ty = (Type) i.get("tipo");
+            var prm = (String) i.get("id");
+
+            String auxTyNode = "n" + tree.getCont();
+            String auxTy2Node = "n" + tree.getCont();
+            String auxIdNode = "n" + tree.getCont();
+
+            result += prmNode + " -> " + auxTyNode + ";\n";
+            result += auxTyNode + " -> " + auxTy2Node + ";\n";
+            result += prmNode + " -> " + auxIdNode + ";\n";
+
+            //result += auxTyNode + "[label=\" " + getDataType(ty.getDataType()) + "\"];\n";
+            result += auxTyNode + "[label=\"TIPO\"];\n";
+            result += auxTy2Node + "[label=\" " + getDataType(ty.getDataType()) + "\"];\n";
+            result += auxIdNode + "[label=\" " + prm + "\"];\n";
+
+            cont++;
+            if (cont + 1 <= this.parameters.size()) {
+                String auxCmNode = "n" + tree.getCont();
+                result += prmNode + " -> " + auxCmNode + ";\n";
+                result += auxCmNode + "[label=\",\"];\n";
+            }
+        }
+
+        for (var i : this.instructions) {
+            if (i == null) {
+                continue;
+            }
+            String nodoAux = "n" + tree.getCont();
+            result += inNode + " -> " + nodoAux + ";\n";
+            result += nodoAux + "[label=\"INSTRUCCION\"];\n";
+            result += i.generateAST(tree, nodoAux);
+        }
+        return result;
+    }
+
+    private String getDataType(DataType dt) {
+
+        switch (dt) {
+            case ENTERO:
+                return "int";
+            case DECIMAL:
+                return "double";
+            case BOOLEANO:
+                return "bool";
+            case CARACTER:
+                return "char";
+            case CADENA:
+                return "String";
+            case VOID:
+                return "void";
+            default:
+                return "";
+        }
+    }
+
 }

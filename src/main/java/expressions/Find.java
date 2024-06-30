@@ -49,9 +49,9 @@ public class Find extends Instruction {
         if (!(variable.getValue() instanceof LinkedList)) {
             return new Error("SEMANTICO", "Uso de función Find Inválido: No puede buscar un valor en un tipo de dato: " + this.expression.type.getDataType(), this.line, this.column);
         }
-        
+
         LinkedList<Object> val = (LinkedList<Object>) variable.getValue();
-        
+
         if (!val.isEmpty()) {
             if (val.get(0) instanceof LinkedList) {
                 for (var a : val) {
@@ -70,8 +70,40 @@ public class Find extends Instruction {
                 }
             }
         }
-        
+
         return false;
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        
+        String fpNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String pNode = "n" + tree.getCont();
+        String findNode = "n" + tree.getCont();
+        String lpNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String rpNode = "n" + tree.getCont();
+
+        String result = fpNode + "[label=\"FUNC-FIND\"];\n";
+        result += previous + " -> " + fpNode + ";\n";
+
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += pNode + "[label=\".\"];\n";
+        result += findNode + "[label=\"find\"];\n";
+        result += lpNode + "[label=\"(\"];\n";
+        result += expNode + "[label=\"EXPRESION\"];\n";
+        result += rpNode + "[label=\")\"];\n";
+
+        result += fpNode + " -> " + idNode + ";\n";
+        result += fpNode + " -> " + pNode + ";\n";
+        result += fpNode + " -> " + findNode + ";\n";
+        result += fpNode + " -> " + lpNode + ";\n";
+        result += fpNode + " -> " + expNode + ";\n";
+        result += fpNode + " -> " + rpNode + ";\n";
+        
+        result += this.expression.generateAST(tree, expNode);
+        return result;
     }
 
 }

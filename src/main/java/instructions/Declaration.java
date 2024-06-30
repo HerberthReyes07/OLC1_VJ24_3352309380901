@@ -76,7 +76,7 @@ public class Declaration extends Instruction {
         if (this.mutabilityType == MutabilityType.VAR) {
             symbol = new Symbol(this.type, this.id, interpretedValue, true, this.line, this.column);
         } else {
-            symbol = new Symbol(this.type, this.id, interpretedValue, false,this.line, this.column);
+            symbol = new Symbol(this.type, this.id, interpretedValue, false, this.line, this.column);
         }
 
         boolean creation = table.setVariable(symbol);
@@ -85,6 +85,88 @@ public class Declaration extends Instruction {
         }
 
         return null;
+    }
+
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        //DECLARACION ::= MUTABILIDAD id : TIPO
+        //              | MUTABILIDAD id : TIPO = EXPRESION:d
+
+        String dpNode = "n" + tree.getCont();
+        String mtpNode = "n" + tree.getCont();
+        String mtNode = "n" + tree.getCont();
+        String idNode = "n" + tree.getCont();
+        String tpNode = "n" + tree.getCont();
+        String typNode = "n" + tree.getCont();
+        String tyNode = "n" + tree.getCont();
+        String igNode = "n" + tree.getCont();
+        String expNode = "n" + tree.getCont();
+        String pcNode = "n" + tree.getCont();
+
+        String result = dpNode + "[label=\"DECLARACION\"];\n";
+        result += previous + " -> " + dpNode + ";\n";
+
+        result += mtpNode + "[label=\"MUTABILIDAD\"];\n";
+        result += mtNode + "[label=\" " + getMutabilityType() + "\"];\n";
+        result += idNode + "[label=\" " + this.id + "\"];\n";
+        result += tpNode + "[label=\":\"];\n";
+
+        result += typNode + "[label=\"TIPO\"];\n";
+        result += tyNode + "[label=\" " + getDataType() + "\"];\n";
+
+        if (this.value != null) {
+            result += igNode + "[label=\"=\"];\n";
+            result += expNode + "[label=\"EXPRESION\"];\n";
+        }
+
+        result += pcNode + "[label=\";\"];\n";
+
+        result += dpNode + " -> " + mtpNode + ";\n";
+        result += mtpNode + " -> " + mtNode + ";\n";
+        result += dpNode + " -> " + idNode + ";\n";
+        result += dpNode + " -> " + tpNode + ";\n";
+        result += dpNode + " -> " + typNode + ";\n";
+        result += typNode + " -> " + tyNode + ";\n";
+        if (this.value != null) {
+            result += dpNode + " -> " + igNode + ";\n";
+            result += dpNode + " -> " + expNode + ";\n";
+            result += this.value.generateAST(tree, expNode);
+        }
+        result += dpNode + " -> " + pcNode + ";\n";
+
+        return result;
+    }
+
+    private String getDataType() {
+
+        switch (this.type.getDataType()) {
+            case ENTERO:
+                return "int";
+            case DECIMAL:
+                return "double";
+            case BOOLEANO:
+                return "bool";
+            case CARACTER:
+                return "char";
+            case CADENA:
+                return "String";
+            case STRUCT:
+                return "Struct";
+            default:
+                return "";
+        }
+    }
+
+    private String getMutabilityType() {
+
+        switch (this.mutabilityType) {
+            case VAR:
+                return "var";
+            case CONST:
+                return "const";
+            default:
+                return "";
+        }
     }
 
 }

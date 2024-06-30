@@ -76,4 +76,9 @@ public class CaseMatch extends Instruction {
         return condition;
     }
 
+    @Override
+    public String generateAST(Tree tree, String previous) {
+        return "";
+    }
+
 }
